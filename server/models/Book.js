@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import validator from "validator";
 
 const BookSchema = new mongoose.Schema({
   title: {
@@ -7,8 +6,49 @@ const BookSchema = new mongoose.Schema({
     required: true,
   },
   author: {
-    type: Array,
+    type: String,
     required: true,
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+  rating: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+  reviews: [
+    {
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+      text: {
+        type: String,
+        required: true,
+      },
+      rating: {
+        type: Number,
+        required: true,
+      },
+      date: {
+        type: Date,
+        default: Date.now,
+      },
+    },
+  ],
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  coverImage: {
+    type: String,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
 });
 
