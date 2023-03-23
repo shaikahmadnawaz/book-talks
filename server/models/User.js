@@ -22,4 +22,9 @@ const UserSchema = new mongoose.Schema({
   },
 });
 
+UserSchema.virtual("bookDetails", {
+  ref: "Book",
+  localField: "_id",
+  foreignField,
+});
 export default mongoose.model("User", UserSchema);
