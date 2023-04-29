@@ -3,6 +3,7 @@ import * as dotenv from "dotenv";
 import cors from "cors";
 import mongoose from "mongoose";
 import connectDB from "./db/connectDB.js";
+import userRouter from "./routes/userRoute.js";
 
 const app = express();
 
@@ -10,9 +11,7 @@ dotenv.config();
 app.use(cors());
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("Hello");
-});
+app.use("/api", userRouter);
 
 const port = process.env.PORT || 5000;
 
