@@ -1,7 +1,7 @@
 import express from "express";
 import * as dotenv from "dotenv";
 import cors from "cors";
-import mongoose from "mongoose";
+import bodyParser from "body-parser";
 import connectDB from "./db/connectDB.js";
 import userRouter from "./routes/userRoute.js";
 
@@ -9,9 +9,9 @@ const app = express();
 
 dotenv.config();
 app.use(cors());
-app.use(express.json());
+app.use(bodyParser.json());
 
-app.use("/api", userRouter);
+app.use("/api/user", userRouter);
 
 const port = process.env.PORT || 5000;
 
