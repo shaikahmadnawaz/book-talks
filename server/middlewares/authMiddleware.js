@@ -17,6 +17,7 @@ const protect = async (req, res, next) => {
 
       // Fetch the user associated with the token
       req.user = await User.findById(decoded.id).select("-password");
+      console.log(req.user);
 
       next();
     } catch (error) {

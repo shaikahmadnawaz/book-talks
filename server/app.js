@@ -3,7 +3,8 @@ import * as dotenv from "dotenv";
 import cors from "cors";
 import bodyParser from "body-parser";
 import connectDB from "./db/connectDB.js";
-import authRouter from "./routes/authRoute.js";
+import authRouter from "./routes/authRoutes.js";
+import bookRoutes from "./routes/bookRoutes.js";
 
 const app = express();
 
@@ -13,6 +14,8 @@ app.use(bodyParser.json());
 
 // Routes for user authentication
 app.use("/api/auth", authRouter);
+
+app.use("/api/books", bookRoutes);
 
 const port = process.env.PORT || 5000;
 
