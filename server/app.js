@@ -3,7 +3,7 @@ import * as dotenv from "dotenv";
 import cors from "cors";
 import bodyParser from "body-parser";
 import connectDB from "./db/connectDB.js";
-import userRouter from "./routes/userRoute.js";
+import authRouter from "./routes/authRoute.js";
 
 const app = express();
 
@@ -11,10 +11,12 @@ dotenv.config();
 app.use(cors());
 app.use(bodyParser.json());
 
-app.use("/api/user", userRouter);
+// Routes for user authentication
+app.use("/api/auth", authRouter);
 
 const port = process.env.PORT || 5000;
 
+// Start the server
 const start = async () => {
   try {
     await connectDB(process.env.MONGO_URL);
