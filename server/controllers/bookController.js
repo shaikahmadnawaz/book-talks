@@ -38,3 +38,107 @@ export const addBook = asyncHandler(async (req, res) => {
   const createdBook = await book.save();
   res.status(201).json(createdBook);
 });
+
+// @desc    Update a book
+// @route   PUT /api/books/:id
+// @access  Private
+export const updateBook = asyncHandler(async (req, res) => {
+  const { title, author, description, coverImage } = req.body;
+
+  const book = await Book.findById(req.params.id);
+
+  if (book) {
+    book.title = title;
+    book.author = author;
+    book.description = description;
+    book.coverImage = coverImage;
+
+    const updatedBook = await book.save();
+    res.json(updatedBook);
+  } else {
+    res.status(404).json({ message: "Book not found" });
+  }
+});
+
+// @desc    Delete a book
+// @route   DELETE /api/books/:id
+// @access  Private
+export const deleteBook = asyncHandler(async (req, res) => {
+  const book = await Book.findById(req.params.id);
+
+  if (book) {
+    await book.remove();
+    res.json({ message: "Book removed" });
+  } else {
+    res.status(404).json({ message: "Book not found" });
+  }
+});
+
+// @desc    Add a review to a book
+// @route   POST /api/books/:id/reviews
+// @access  Private
+export const addReview = asyncHandler(async (req, res) => {
+  const { text, rating } = req.body;
+
+  const book = await Book.findById(req.params.id);
+
+  if (book) {
+    const review = {
+      user: req.user._id,
+      text,
+      rating,
+    };
+
+    book.reviews.push(review);
+    await book.save();
+
+    res.status(201).json({ message: "Review added" });
+  } else {
+    res.status(404).json({ message: "Book not found" });
+  }
+});
+
+// @desc    Update a book review
+// @route   PUT /api/books/:id/reviews/:reviewId
+// @access  Private
+export const updateReview = asyncHandler(async (req, res) => {
+  const { text, rating } = req.body;
+
+  const book = await Book.findById(req.params.id);
+
+  if (book) {
+    const review = book.reviews.find(
+      (review) => review._id.toString() === req.params.reviewId
+    );
+
+    if (review) {
+      review.text = text;
+      review.rating = rating;
+
+      await book.save();
+      res.json({ message: "Review updated" });
+    } else {
+      res.status(404).json({ message: "Review not found" });
+    }
+  } else {
+    res.status(404).json({ message: "Book not found" });
+  }
+});
+
+// @desc    Delete a book review
+// @route   DELETE /api/books/:id/reviews/:reviewId
+// @access  Private
+export const deleteReview = asyncHandler(async (req, res) => {
+  const book = await Book.findById(req.params.id);
+
+  if (book) {
+    book.reviews = book.reviews.filter(
+      (review) => review._id.toString() !== req.params.reviewId
+    );
+
+    await book.save();
+    res.json({ message: "Review removed" });
+  } else {
+    res.status(404).json({ message: "Book not found" });
+  }
+});
