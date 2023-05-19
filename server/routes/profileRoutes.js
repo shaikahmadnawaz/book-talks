@@ -1,9 +1,9 @@
-import express from "express";
-import { protect } from "../middleware/authMiddleware.js";
-import { getUserProfile } from "../controllers/profileController.js";
+// import express from "express";
+// import { protect } from "../middleware/authMiddleware.js";
+// import { getUserProfile } from "../controllers/profileController.js";
 
-const router = express.Router();
+// const router = express.Router();
 
-router.get("/me", protect, getUserProfile);
+// router.get("/me", protect, getUserProfile);
 
-export default router;
+// export default router;

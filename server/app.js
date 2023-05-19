@@ -5,7 +5,7 @@ import bodyParser from "body-parser";
 import connectDB from "./db/connectDB.js";
 import authRouter from "./routes/authRoutes.js";
 import bookRoutes from "./routes/bookRoutes.js";
-import profileRoutes from "./routes/profileRoutes.js";
+// import profileRoutes from "./routes/profileRoutes.js";
 
 const app = express();
 
@@ -18,7 +18,7 @@ app.use("/api/auth", authRouter);
 
 app.use("/api/books", bookRoutes);
 
-app.use("/api/profile", profileRoutes);
+// app.use("/api/profile", profileRoutes);
 
 const port = process.env.PORT || 5000;
 
