@@ -1,5 +1,3 @@
-// services/auth.js
-
 import axios from "axios";
 
 // Function to make login API request
