@@ -89,7 +89,7 @@ export const addReview = asyncHandler(async (req, res) => {
       rating,
     };
 
-    book.reviews.push(review);
+    book.reviews.unshift(review); // Change from 'push' to 'unshift'
     await book.save();
 
     res.status(201).json({ message: "Review added" });
@@ -108,7 +108,7 @@ export const updateReview = asyncHandler(async (req, res) => {
 
   if (book) {
     const review = book.reviews.find(
-      (review) => review._id.toString() === req.params.reviewId
+      (review) => review._id.toString() === req.params.reviewId.toString() // Add toString() for comparison
     );
 
     if (review) {
@@ -133,7 +133,7 @@ export const deleteReview = asyncHandler(async (req, res) => {
 
   if (book) {
     book.reviews = book.reviews.filter(
-      (review) => review._id.toString() !== req.params.reviewId
+      (review) => review._id.toString() !== req.params.reviewId.toString() // Add toString() for comparison
     );
 
     await book.save();
