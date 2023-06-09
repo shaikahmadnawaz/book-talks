@@ -57,7 +57,8 @@ export const login = async (req, res) => {
       expiresIn: "24h", // Token expiration time
     });
 
-    res.status(200).json({ token });
+    const userData = await User.findOne({ _id: user._id }).select("-password");
+    res.status(200).json({ userData, token });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
