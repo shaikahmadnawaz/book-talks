@@ -6,18 +6,24 @@ import Book from "../models/Book.js";
 // @route   GET /api/profile/me
 // @access  Private
 export const getUserProfile = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id);
-  console.log(user);
-  if (user) {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
     const books = await Book.find({ user: req.user._id });
-    console.log(books);
+
     res.json({
       _id: user._id,
       name: user.name,
       email: user.email,
       books,
     });
-  } else {
-    res.status(404).json({ message: "User not found" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to fetch user profile", error: error.message });
   }
 });
