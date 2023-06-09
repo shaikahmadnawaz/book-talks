@@ -7,13 +7,13 @@ import Book from "../models/Book.js";
 // @access  Private
 export const getUserProfile = asyncHandler(async (req, res) => {
   try {
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.userId);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const books = await Book.find({ user: req.user._id });
+    const books = await Book.find({ user: req.userId });
 
     res.json({
       _id: user._id,
