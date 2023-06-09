@@ -6,19 +6,33 @@ import Review from "../models/Review.js";
 // @route   GET /api/books
 // @access  Public
 export const getBooks = asyncHandler(async (req, res) => {
-  const books = await Book.find({});
-  res.json(books);
+  try {
+    const books = await Book.find({}).populate("reviews");
+    if (books.length > 0) {
+      res
+        .status(200)
+        .json({ message: "Books found", totalBooks: books.length, books });
+    } else {
+      res.status(404).json({ message: "No books found" });
+    }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 // @desc    Get a book by ID
 // @route   GET /api/books/:id
 // @access  Public
 export const getBookById = asyncHandler(async (req, res) => {
-  const book = await Book.findById(req.params.id).populate("reviews");
-  if (book) {
-    res.json(book);
-  } else {
-    res.status(404).json({ message: "Book not found" });
+  try {
+    const book = await Book.findById(req.params.id).populate("reviews");
+    if (!book) {
+      res.status(200).json({ message: "Book found", book });
+    } else {
+      res.status(404).json({ message: "Book not found" });
+    }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 });
 
@@ -28,16 +42,20 @@ export const getBookById = asyncHandler(async (req, res) => {
 export const addBook = asyncHandler(async (req, res) => {
   const { title, author, description, coverImage } = req.body;
 
-  const book = new Book({
-    title,
-    author,
-    description,
-    coverImage,
-    user: req.userId,
-  });
+  try {
+    const book = new Book({
+      title,
+      author,
+      description,
+      coverImage,
+      user: req.userId,
+    });
 
-  const createdBook = await book.save();
-  res.status(201).json(createdBook);
+    const createdBook = await book.save();
+    res.status(201).json(createdBook);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to create book" });
+  }
 });
 
 // @desc    Update a book
@@ -75,47 +93,44 @@ export const deleteBook = asyncHandler(async (req, res) => {
   }
 });
 
-
-export const getReviews = asyncHandler(async(req,res,next)=>{
+export const getReviews = asyncHandler(async (req, res, next) => {
   const bookId = req.params.bookId;
-  if(!bookId)
-  {
-    return res.status(400).json({message:"Book ID not received !"});
+  if (!bookId) {
+    return res.status(400).json({ message: "Book ID not received !" });
   }
-  try{
+  try {
     const book = await Book.findById(bookId);
-    if(!book)
-    {
-      return res.status(404).json({message : "Book Not Found !"});
+    if (!book) {
+      return res.status(404).json({ message: "Book Not Found !" });
     }
     const reviews = await Book.findById(bookId).populate("reviews");
-    return res.status(200).json({message : "reviews sent ",reviews})
+    return res.status(200).json({ message: "reviews sent ", reviews });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
   }
-  catch(err)
-  {
-    return res.status(500).json({message : err.message});
-  }
-})
+});
 
 // @desc    Add a review to a book
 // @route   POST /api/books/:id/reviews
 // @access  Private
 export const addReview = asyncHandler(async (req, res) => {
   const { text, rating } = req.body;
-  try{
+  try {
     const book = await Book.findById(req.params.id);
     const userId = req.userId;
     if (book) {
-      const newReview = await Review.create({text,rating,user:userId,book:req.params.id,});
-      return res.status(200).json({message : "Review Created !"})
+      const newReview = await Review.create({
+        text,
+        rating,
+        user: userId,
+        book: req.params.id,
+      });
+      return res.status(200).json({ message: "Review Created !" });
     }
-    return res.status(404).json({message : "Book Not Found !"})
+    return res.status(404).json({ message: "Book Not Found !" });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
   }
-  catch(err)
-  {
-    return res.status(500).json({message : err.message})
-  }
-  
 });
 
 // @desc    Update a book review
