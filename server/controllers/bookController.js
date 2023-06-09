@@ -106,7 +106,7 @@ export const addReview = asyncHandler(async (req, res) => {
     const book = await Book.findById(req.params.id);
     const userId = req.userId;
     if (book) {
-      const newReview = await Review.create({text,rating,user:userId,book:id,});
+      const newReview = await Review.create({text,rating,user:userId,book:req.params.id,});
       return res.status(200).json({message : "Review Created !"})
     }
     return res.status(404).json({message : "Book Not Found !"})
