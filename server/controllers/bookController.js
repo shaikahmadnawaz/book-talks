@@ -1,5 +1,6 @@
 import asyncHandler from "express-async-handler";
 import Book from "../models/Book.js";
+import Review from "../models/Review.js";
 
 // @desc    Get all books
 // @route   GET /api/books
@@ -13,7 +14,7 @@ export const getBooks = asyncHandler(async (req, res) => {
 // @route   GET /api/books/:id
 // @access  Public
 export const getBookById = asyncHandler(async (req, res) => {
-  const book = await Book.findById(req.params.id);
+  const book = await Book.findById(req.params.id).populate("reviews");
   if (book) {
     res.json(book);
   } else {
@@ -32,7 +33,7 @@ export const addBook = asyncHandler(async (req, res) => {
     author,
     description,
     coverImage,
-    user: req.user._id,
+    user: req.userId,
   });
 
   const createdBook = await book.save();
@@ -74,28 +75,47 @@ export const deleteBook = asyncHandler(async (req, res) => {
   }
 });
 
+
+export const getReviews = asyncHandler(async(req,res,next)=>{
+  const bookId = req.params.bookId;
+  if(!bookId)
+  {
+    return res.status(400).json({message:"Book ID not received !"});
+  }
+  try{
+    const book = await Book.findById(bookId);
+    if(!book)
+    {
+      return res.status(404).json({message : "Book Not Found !"});
+    }
+    const reviews = await Book.findById(bookId).populate("reviews");
+    return res.status(200).json({message : "reviews sent ",reviews})
+  }
+  catch(err)
+  {
+    return res.status(500).json({message : err.message});
+  }
+})
+
 // @desc    Add a review to a book
 // @route   POST /api/books/:id/reviews
 // @access  Private
 export const addReview = asyncHandler(async (req, res) => {
   const { text, rating } = req.body;
-
-  const book = await Book.findById(req.params.id);
-
-  if (book) {
-    const review = {
-      user: req.user._id,
-      text,
-      rating,
-    };
-
-    book.reviews.unshift(review); // Change from 'push' to 'unshift'
-    await book.save();
-
-    res.status(201).json({ message: "Review added" });
-  } else {
-    res.status(404).json({ message: "Book not found" });
+  try{
+    const book = await Book.findById(req.params.id);
+    const userId = req.userId;
+    if (book) {
+      const newReview = await Review.create({text,rating,user:userId,book:id,});
+      return res.status(200).json({message : "Review Created !"})
+    }
+    return res.status(404).json({message : "Book Not Found !"})
   }
+  catch(err)
+  {
+    return res.status(500).json({message : err.message})
+  }
+  
 });
 
 // @desc    Update a book review
