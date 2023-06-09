@@ -20,12 +20,19 @@ const UserSchema = new mongoose.Schema({
     required: [true, "Password is required"],
     minlength: 5,
   },
-  books: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Book",
-    },
-  ],
+},{
+  toJSON:{
+    virtuals : true
+  },
+  toObject : {
+    virtuals : true
+  }
 });
+ 
+UserSchema.virtual("books",{
+  ref : "Book",
+  localField : "_id",
+  foreignField : "user"
+})
 
 export default mongoose.model("User", UserSchema);
