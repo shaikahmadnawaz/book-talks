@@ -26,7 +26,7 @@ export const getBooks = asyncHandler(async (req, res) => {
 export const getBookById = asyncHandler(async (req, res) => {
   try {
     const book = await Book.findById(req.params.id).populate("reviews");
-    if (!book) {
+    if (book) {
       res.status(200).json({ message: "Book found", book });
     } else {
       res.status(404).json({ message: "Book not found" });
@@ -74,7 +74,7 @@ export const updateBook = asyncHandler(async (req, res) => {
       book.coverImage = coverImage;
 
       const updatedBook = await book.save();
-      res.json({ message: "Book updated" }, updatedBook);
+      res.status(200).json({ message: "Book updated", book: updatedBook });
     } else {
       res.status(404).json({ message: "Book not found" });
     }
@@ -88,16 +88,19 @@ export const updateBook = asyncHandler(async (req, res) => {
 // @access  Private
 export const deleteBook = asyncHandler(async (req, res) => {
   try {
-    const book = await Book.findById(req.params.id);
+    const bookId = await Book.findById(req.params.id);
 
-    if (book) {
-      await book.remove();
-      res.status(200).json({ message: "Book removed" });
-    } else {
-      res.status(404).json({ message: "Book not found" });
+    if (!bookId) {
+      return res.status(404).json({ message: "Book not found" });
     }
+
+    const book = await Book.findByIdAndDelete(bookId);
+    const books = await Book.find({ books: book.books });
+    return res.status(200).json({ message: "Book deleted", books });
   } catch (error) {
-    res.status(500).json({ message: "Server Error" });
+    res
+      .status(500)
+      .json({ message: "Failed to delete book", error: error.message });
   }
 });
 
@@ -127,20 +130,31 @@ export const getReviews = asyncHandler(async (req, res) => {
 // @route   POST /api/books/:id/reviews
 // @access  Private
 export const addReview = asyncHandler(async (req, res) => {
-  const { text, rating } = req.body;
+  const { comment, rating } = req.body;
+
   try {
     const book = await Book.findById(req.params.id);
-    const userId = req.userId;
+
     if (book) {
+      const userId = req.userId; // Assuming you have the user ID available in req.userId
+
       const newReview = await Review.create({
-        text,
+        comment,
         rating,
         user: userId,
         book: req.params.id,
       });
-      return res.status(200).json({ message: "Review Created!" }, newReview);
+
+      // Update book with the new review
+      book.reviews.push(newReview);
+      await book.save();
+
+      return res
+        .status(200)
+        .json({ message: "Review created", review: newReview });
     }
-    return res.status(404).json({ message: "Book Not Found !" });
+
+    return res.status(404).json({ message: "Book not found" });
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
@@ -150,7 +164,7 @@ export const addReview = asyncHandler(async (req, res) => {
 // @route   PUT /api/books/:id/reviews/:reviewId
 // @access  Private
 export const updateReview = asyncHandler(async (req, res) => {
-  const { text, rating } = req.body;
+  const { comment, rating } = req.body;
 
   try {
     const book = await Book.findById(req.params.id);
@@ -161,7 +175,7 @@ export const updateReview = asyncHandler(async (req, res) => {
       );
 
       if (review) {
-        review.text = text;
+        review.comment = comment;
         review.rating = rating;
 
         await book.save();
