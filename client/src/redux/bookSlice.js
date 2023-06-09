@@ -4,7 +4,7 @@ import { getAllBooks } from "../services/book";
 // Async thunk action to fetch all books
 export const fetchBooks = createAsyncThunk("books/fetchBooks", async () => {
   const response = await getAllBooks();
-  return response.data;
+  return response;
 });
 
 // Slice

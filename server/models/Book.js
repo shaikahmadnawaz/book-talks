@@ -18,26 +18,6 @@ const BookSchema = new mongoose.Schema({
     required: true,
     default: 0,
   },
-  reviews: [
-    {
-      user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-      text: {
-        type: String,
-        required: true,
-      },
-      rating: {
-        type: Number,
-        required: true,
-      },
-      date: {
-        type: Date,
-        default: Date.now,
-      },
-    },
-  ],
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -50,6 +30,19 @@ const BookSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+},{
+  toJSON: {
+    virtuals: true,
+  },
+  toObject: {
+    virtuals: true,
+  },
 });
+
+BookSchema.virtual("reviews",{
+  ref:"Review",
+  localField : "_id",
+  foreignField : "book"
+})
 
 export default mongoose.model("Book", BookSchema);
