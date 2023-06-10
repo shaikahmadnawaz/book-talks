@@ -42,6 +42,10 @@ export const getBookById = asyncHandler(async (req, res) => {
 export const addBook = asyncHandler(async (req, res) => {
   const { title, author, description, coverImage } = req.body;
 
+  if (!title || !author || !description || !coverImage) {
+    return res.status(400).json({ message: "Please fill all required fields" });
+  }
+
   try {
     const book = new Book({
       title,
@@ -132,6 +136,10 @@ export const getReviews = asyncHandler(async (req, res) => {
 export const addReview = asyncHandler(async (req, res) => {
   const { comment, rating } = req.body;
 
+  if (!comment || !rating) {
+    return res.status(400).json({ message: "Please fill all required fields" });
+  }
+
   try {
     const book = await Book.findById(req.params.id);
 
@@ -144,10 +152,6 @@ export const addReview = asyncHandler(async (req, res) => {
         user: userId,
         book: req.params.id,
       });
-
-      // Update book with the new review
-      book.reviews.push(newReview);
-      await book.save();
 
       return res
         .status(200)
@@ -167,27 +171,21 @@ export const updateReview = asyncHandler(async (req, res) => {
   const { comment, rating } = req.body;
 
   try {
-    const book = await Book.findById(req.params.id);
+    const review = await Review.findById(req.params.reviewId);
 
-    if (book) {
-      const review = book.reviews.find(
-        (review) => review._id.toString() === req.params.reviewId.toString()
-      );
+    if (review) {
+      review.comment = comment;
+      review.rating = rating;
 
-      if (review) {
-        review.comment = comment;
-        review.rating = rating;
-
-        await book.save();
-        res.status(200).json({ message: "Review updated" });
-      } else {
-        res.status(404).json({ message: "Review not found" });
-      }
+      await review.save();
+      res.status(200).json({ message: "Review updated" });
     } else {
-      res.status(404).json({ message: "Book not found" });
+      res.status(404).json({ message: "Review not found" });
     }
+    // } else {
+    //   res.status(404).json({ message: "Book not found" });
   } catch (error) {
-    res.status(500).json({ message: "Server Error" });
+    res.status(500).json({ message: error.message });
   }
 });
 

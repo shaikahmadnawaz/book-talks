@@ -7,6 +7,12 @@ export const signup = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
+    if (!name || !email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Please fill all required fields" });
+    }
+
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -37,6 +43,12 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Please fill all required fields" });
+    }
 
     // Check if user exists
     const user = await User.findOne({ email });

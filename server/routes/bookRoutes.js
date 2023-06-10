@@ -20,10 +20,10 @@ router.get("/:id", getBookById);
 
 // Protected routes
 router.post("/", protect, addBook);
-router.put("/:id", protect, updateBook);
+router.patch("/:id", protect, updateBook);
 router.delete("/:id", protect, deleteBook);
 router.post("/:id/reviews", protect, addReview);
-router.put("/:id/reviews/:reviewId", protect, updateReview);
+router.patch("/:id/reviews/:reviewId", protect, updateReview);
 router.delete("/:id/reviews/:reviewId", protect, deleteReview);
 router.get("/book/:bookId/reviews", protect, getReviews);
 
