@@ -1,7 +1,7 @@
 import asyncHandler from "express-async-handler";
 import Book from "../models/Book.js";
 import Review from "../models/Review.js";
-import upload from "../utils/awsUploder.js";
+import { uploadCoverImage } from "../middlewares/uploadMiddleware.js";
 
 // @desc    Get all books
 // @route   GET /api/books
@@ -52,7 +52,6 @@ export const addBook = asyncHandler(async (req, res) => {
       title,
       author,
       description,
-      coverImage: req.file?.location || "", // Use optional chaining to safely access the location property
       user: req.userId,
     });
 
@@ -62,21 +61,6 @@ export const addBook = asyncHandler(async (req, res) => {
     res.status(500).json({ message: "Failed to create book" });
   }
 });
-
-// Create an upload middleware using multer and the storage
-const uploadMiddleware = upload.single("coverImage");
-
-// @desc    Add a new book with file upload
-// @route   POST /api/books
-// @access  Private
-export const addBookWithUpload = asyncHandler(async (req, res, next) => {
-  uploadMiddleware(req, res, function (err) {
-    if (err) {
-      return res.status(400).json({ message: "Failed to upload cover image" });
-    }
-    next(); // Call next middleware if file upload is successful
-  });
-}, addBook);
 
 // @desc    Update a book
 // @route   PUT /api/books/:id
@@ -108,19 +92,17 @@ export const updateBook = asyncHandler(async (req, res) => {
 // @access  Private
 export const deleteBook = asyncHandler(async (req, res) => {
   try {
-    const bookId = await Book.findById(req.params.id);
+    const book = await Book.findById(req.params.id);
 
-    if (!bookId) {
+    if (!book) {
       return res.status(404).json({ message: "Book not found" });
     }
 
-    const book = await Book.findByIdAndDelete(bookId);
-    const books = await Book.find({ books: book.books });
-    return res.status(200).json({ message: "Book deleted", books });
+    await book.remove();
+
+    res.status(200).json({ message: "Book deleted" });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to delete book", error: error.message });
+    res.status(500).json({ message: "Failed to delete book" });
   }
 });
 
@@ -129,20 +111,14 @@ export const deleteBook = asyncHandler(async (req, res) => {
 // @access  Public
 export const getReviews = asyncHandler(async (req, res) => {
   try {
-    const bookId = req.params.bookId;
-    if (!bookId) {
-      return res.status(400).json({ message: "Book ID not received!" });
-    }
-
-    const book = await Book.findById(bookId);
+    const book = await Book.findById(req.params.bookId).populate("reviews");
     if (!book) {
-      return res.status(404).json({ message: "Book Not Found!" });
+      return res.status(404).json({ message: "Book not found" });
     }
 
-    const reviews = await Book.findById(bookId).populate("reviews");
-    return res.status(200).json({ message: "Reviews sent", reviews });
+    res.status(200).json({ message: "Reviews sent", reviews: book.reviews });
   } catch (error) {
-    return res.status(500).json({ message: "Server Error" });
+    res.status(500).json({ message: "Server Error" });
   }
 });
 
@@ -159,24 +135,22 @@ export const addReview = asyncHandler(async (req, res) => {
   try {
     const book = await Book.findById(req.params.id);
 
-    if (book) {
-      const userId = req.userId; // Assuming you have the user ID available in req.userId
-
-      const newReview = await Review.create({
-        comment,
-        rating,
-        user: userId,
-        book: req.params.id,
-      });
-
-      return res
-        .status(200)
-        .json({ message: "Review created", review: newReview });
+    if (!book) {
+      return res.status(404).json({ message: "Book not found" });
     }
 
-    return res.status(404).json({ message: "Book not found" });
+    const newReview = new Review({
+      comment,
+      rating,
+      user: req.userId,
+      book: req.params.id,
+    });
+
+    await newReview.save();
+
+    res.status(200).json({ message: "Review created", review: newReview });
   } catch (err) {
-    return res.status(500).json({ message: err.message });
+    res.status(500).json({ message: "Failed to create review" });
   }
 });
 
@@ -189,19 +163,18 @@ export const updateReview = asyncHandler(async (req, res) => {
   try {
     const review = await Review.findById(req.params.reviewId);
 
-    if (review) {
-      review.comment = comment;
-      review.rating = rating;
-
-      await review.save();
-      res.status(200).json({ message: "Review updated" });
-    } else {
-      res.status(404).json({ message: "Review not found" });
+    if (!review) {
+      return res.status(404).json({ message: "Review not found" });
     }
-    // } else {
-    //   res.status(404).json({ message: "Book not found" });
+
+    review.comment = comment;
+    review.rating = rating;
+
+    await review.save();
+
+    res.status(200).json({ message: "Review updated" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: "Failed to update review" });
   }
 });
 
@@ -216,22 +189,51 @@ export const deleteReview = asyncHandler(async (req, res) => {
       return res.status(404).json({ message: "Book not found" });
     }
 
-    const reviewId = req.params.reviewId;
-    const filteredReviews = book.reviews.filter(
-      (review) => review._id.toString() !== reviewId.toString()
-    );
+    const review = await Review.findById(req.params.reviewId);
 
-    if (filteredReviews.length === book.reviews.length) {
+    if (!review) {
       return res.status(404).json({ message: "Review not found" });
     }
 
-    book.reviews = filteredReviews;
-    await book.save();
+    await review.remove();
 
-    res.json({ message: "Review removed" });
+    res.status(200).json({ message: "Review deleted" });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to delete review", error: error.message });
+    res.status(500).json({ message: "Failed to delete review" });
+  }
+});
+
+// @desc    Add a new book with file upload
+// @route   POST /api/books
+// @access  Private
+export const addBookWithUpload = asyncHandler(async (req, res) => {
+  try {
+    const { title, author, description } = req.body;
+
+    if (!title || !author || !description) {
+      return res
+        .status(400)
+        .json({ message: "Please fill all required fields" });
+    }
+
+    const book = new Book({
+      title,
+      author,
+      description,
+      user: req.userId,
+    });
+
+    const createdBook = await book.save();
+
+    if (req.file) {
+      const file = req.file;
+      await uploadCoverImage(file, createdBook._id);
+      createdBook.coverImage = file.location;
+      await createdBook.save();
+    }
+
+    res.status(201).json(createdBook);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to create book" });
   }
 });
