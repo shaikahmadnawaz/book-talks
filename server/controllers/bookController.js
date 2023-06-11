@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import Book from "../models/Book.js";
 import Review from "../models/Review.js";
+import { uploadCoverImage } from "../middlewares/uploadMiddleware.js";
 
 // @desc    Get all books
 // @route   GET /api/books
@@ -40,20 +41,27 @@ export const getBookById = asyncHandler(async (req, res) => {
 // @route   POST /api/books
 // @access  Private
 export const addBook = asyncHandler(async (req, res) => {
-  const { title, author, description, coverImage } = req.body;
+  const { title, author, description } = req.body;
 
-  if (!title || !author || !description || !coverImage) {
-    return res.status(400).json({ message: "Please fill all required fields" });
-  }
+  // if (!title || !author || !description) {
+  //   return res.status(400).json({ message: "Please fill all required fields" });
+  // }
 
   try {
     const book = new Book({
       title,
       author,
       description,
-      coverImage,
       user: req.userId,
     });
+
+    if (req.file) {
+      // Upload the cover image to AWS S3
+      await uploadCoverImage(req.file, book._id);
+
+      // Set the cover image URL in the book model
+      book.coverImage = `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${book._id}.jpg`;
+    }
 
     const createdBook = await book.save();
     res.status(201).json(createdBook);

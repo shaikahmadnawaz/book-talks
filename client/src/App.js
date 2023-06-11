@@ -7,6 +7,7 @@ import BookList from "./components/books/BookList";
 import BookDetail from "./components/books/BookDetail";
 import UserProfile from "./components/user/UserProfile";
 import NotFoundPage from "./pages/NotFoundPage";
+import BookForm from "./components/books/BookForm";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/books" element={<BookList />} />
+        <Route path="/books/new" element={<BookForm />} />
         <Route path="/books/:id" element={<BookDetail />} />
         <Route path="/profile" element={<UserProfile />} />
         <Route path="*" element={<NotFoundPage />} />

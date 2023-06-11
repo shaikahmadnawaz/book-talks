@@ -6,6 +6,7 @@ import connectDB from "./db/connectDB.js";
 import authRouter from "./routes/authRoutes.js";
 import bookRoutes from "./routes/bookRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
+import multer from "multer";
 
 const app = express();
 
@@ -13,10 +14,17 @@ dotenv.config();
 app.use(cors());
 app.use(bodyParser.json());
 
+const upload = multer({
+  storage: multer.memoryStorage(), // Store the file in memory as a Buffer
+  limits: {
+    fileSize: 5 * 1024 * 1024, // Limit the file size to 5MB
+  },
+});
+
 // Routes for user authentication
 app.use("/api/auth", authRouter);
 
-app.use("/api/books", bookRoutes);
+app.use("/api/books", upload.single("coverImage"), bookRoutes);
 
 app.use("/api/profile", profileRoutes);
 
