@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import Book from "../models/Book.js";
 import Review from "../models/Review.js";
+import upload from "../utils/awsUploder.js";
 
 // @desc    Get all books
 // @route   GET /api/books
@@ -40,9 +41,9 @@ export const getBookById = asyncHandler(async (req, res) => {
 // @route   POST /api/books
 // @access  Private
 export const addBook = asyncHandler(async (req, res) => {
-  const { title, author, description, coverImage } = req.body;
+  const { title, author, description } = req.body;
 
-  if (!title || !author || !description || !coverImage) {
+  if (!title || !author || !description) {
     return res.status(400).json({ message: "Please fill all required fields" });
   }
 
@@ -51,7 +52,7 @@ export const addBook = asyncHandler(async (req, res) => {
       title,
       author,
       description,
-      coverImage,
+      coverImage: req.file?.location || "", // Use optional chaining to safely access the location property
       user: req.userId,
     });
 
@@ -61,6 +62,21 @@ export const addBook = asyncHandler(async (req, res) => {
     res.status(500).json({ message: "Failed to create book" });
   }
 });
+
+// Create an upload middleware using multer and the storage
+const uploadMiddleware = upload.single("coverImage");
+
+// @desc    Add a new book with file upload
+// @route   POST /api/books
+// @access  Private
+export const addBookWithUpload = asyncHandler(async (req, res, next) => {
+  uploadMiddleware(req, res, function (err) {
+    if (err) {
+      return res.status(400).json({ message: "Failed to upload cover image" });
+    }
+    next(); // Call next middleware if file upload is successful
+  });
+}, addBook);
 
 // @desc    Update a book
 // @route   PUT /api/books/:id

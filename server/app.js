@@ -7,9 +7,9 @@ import authRouter from "./routes/authRoutes.js";
 import bookRoutes from "./routes/bookRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
 
+dotenv.config();
 const app = express();
 
-dotenv.config();
 app.use(cors());
 app.use(bodyParser.json());
 

@@ -1,5 +1,6 @@
 import express from "express";
 import { protect } from "../middlewares/authMiddleware.js";
+import { uploadFileToS3 } from "../middlewares/uploadMiddleware.js";
 import {
   getBooks,
   getBookById,
@@ -19,8 +20,8 @@ router.get("/", getBooks);
 router.get("/:id", getBookById);
 
 // Protected routes
-router.post("/", protect, addBook);
-router.patch("/:id", protect, updateBook);
+router.post("/", protect, uploadFileToS3, addBook);
+router.patch("/:id", protect, uploadFileToS3, updateBook);
 router.delete("/:id", protect, deleteBook);
 router.post("/:id/reviews", protect, addReview);
 router.patch("/:id/reviews/:reviewId", protect, updateReview);
