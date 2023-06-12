@@ -11,13 +11,13 @@ const HomePage = () => {
       <div className="flex space-x-4">
         <Link
           to="/signup"
-          className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
+          className="bg-primary text-white font-semibold py-2 px-4 rounded"
         >
           Sign Up
         </Link>
         <Link
           to="/login"
-          className="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded"
+          className="bg-gray-500 text-white font-semibold py-2 px-4 rounded"
         >
           Log In
         </Link>

@@ -5,7 +5,7 @@ import { getAllBooks } from "../services/book";
 export const fetchBooks = createAsyncThunk("books/fetchBooks", async () => {
   try {
     const response = await getAllBooks();
-    return response.data;
+    return response;
   } catch (error) {
     throw new Error("Failed to fetch books");
   }
@@ -27,7 +27,9 @@ const bookSlice = createSlice({
       })
       .addCase(fetchBooks.fulfilled, (state, action) => {
         state.loading = false;
+        console.log(action.payload.books, "present");
         state.books = action.payload.books;
+        console.log(action.payload.books);
       })
       .addCase(fetchBooks.rejected, (state, action) => {
         state.loading = false;
