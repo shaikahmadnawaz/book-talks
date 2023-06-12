@@ -1,4 +1,7 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { extname } from "path";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 // Create an S3 client
 const s3Client = new S3Client({
@@ -10,13 +13,17 @@ const s3Client = new S3Client({
 });
 
 export const uploadCoverImage = async (file, id) => {
+  console.log(file, id);
   try {
+    // Determine the content type based on the file extension
+    const contentType = `image/${extname(file.originalname).substring(1)}`;
+
     // Set the parameters
     const command = new PutObjectCommand({
       Bucket: process.env.AWS_BUCKET_NAME,
-      Key: `${id}.jpg`, // File name you want to save as in S3
+      Key: file.originalname, // File name you want to save as in S3
       Body: file.buffer,
-      ACL: "public-read",
+      ContentType: contentType,
     });
 
     // Upload the file

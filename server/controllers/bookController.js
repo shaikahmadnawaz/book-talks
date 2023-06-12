@@ -60,13 +60,13 @@ export const addBook = asyncHandler(async (req, res) => {
       await uploadCoverImage(req.file, book._id);
 
       // Set the cover image URL in the book model
-      book.coverImage = `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${book._id}.jpg`;
+      book.coverImage = `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${req.file.originalname}`;
     }
 
     const createdBook = await book.save();
     res.status(201).json(createdBook);
   } catch (error) {
-    res.status(500).json({ message: "Failed to create book" });
+    res.status(500).json({ message: error.message });
   }
 });
 
@@ -74,16 +74,23 @@ export const addBook = asyncHandler(async (req, res) => {
 // @route   PUT /api/books/:id
 // @access  Private
 export const updateBook = asyncHandler(async (req, res) => {
-  const { title, author, description, coverImage } = req.body;
+  const { title, author, description } = req.body;
 
   try {
     const book = await Book.findById(req.params.id);
 
     if (book) {
-      book.title = title;
-      book.author = author;
-      book.description = description;
-      book.coverImage = coverImage;
+      book.title = title || book.title;
+      book.author = author || book.author;
+      book.description = description || book.description;
+
+      if (req.file) {
+        // Upload the cover image to AWS S3
+        await uploadCoverImage(req.file, book._id);
+
+        // Set the cover image URL in the book model
+        book.coverImage = `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${req.file.originalname}`;
+      }
 
       const updatedBook = await book.save();
       res.status(200).json({ message: "Book updated", book: updatedBook });
@@ -91,7 +98,7 @@ export const updateBook = asyncHandler(async (req, res) => {
       res.status(404).json({ message: "Book not found" });
     }
   } catch (error) {
-    res.status(500).json({ message: "Failed to update book" });
+    res.status(500).json({ message: error.message });
   }
 });
 

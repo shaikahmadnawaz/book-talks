@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 const upload = multer({
   storage: multer.memoryStorage(), // Store the file in memory as a Buffer
   limits: {
-    fileSize: 5 * 1024 * 1024, // Limit the file size to 5MB
+    fileSize: 25 * 1024 * 1024, // Limit the file size to 5MB
   },
 });
 
