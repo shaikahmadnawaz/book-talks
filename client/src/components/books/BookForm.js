@@ -9,6 +9,7 @@ const BookForm = () => {
   const [author, setAuthor] = useState("");
   const [description, setDescription] = useState("");
   const [coverImage, setCoverImage] = useState(null);
+  const [category, setCategory] = useState("");
 
   const handleFileChange = (e) => {
     setCoverImage(e.target.files[0]);
@@ -23,6 +24,7 @@ const BookForm = () => {
     formData.append("author", author);
     formData.append("description", description);
     formData.append("coverImage", coverImage);
+    formData.append("category", category);
 
     // Obtain the authorization token from your client application
     const token = localStorage.getItem("token"); // Assuming the token is stored in local storage
@@ -99,6 +101,29 @@ const BookForm = () => {
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Enter description"
           ></textarea>
+        </div>
+        <div className="mb-4">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="category"
+          >
+            Category:
+          </label>
+          <select
+            className="border-gray-400 border-2 rounded-md p-2 lg:w-2/3"
+            name="gender"
+            onChange={(e) => setCategory(e.target.value)}
+            defaultValue={"Select category"}
+          >
+            <option value="Select category" disabled>
+              -- SELECT --
+            </option>
+            <option value="fiction">Fiction</option>
+            <option value="romance">Romance</option>
+            <option value="biography">Biography</option>
+            <option value="poetry">Poetry</option>
+            <option value="crime">Crime</option>
+          </select>
         </div>
         <div className="mb-4">
           <label

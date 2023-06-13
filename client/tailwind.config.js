@@ -5,6 +5,7 @@ module.exports = {
     extend: {
       colors: {
         primary: "#21BF73",
+        secondary: "#f9fcfb",
       },
       screens: {
         xs: "360px", // Extra-small screens

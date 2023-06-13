@@ -19,6 +19,13 @@ const BookSchema = new mongoose.Schema(
       // required: true,
       default: 0,
     },
+    category: {
+      type: String,
+    },
+    viewCount: {
+      type: Number,
+      default: 0,
+    },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

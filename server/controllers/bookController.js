@@ -28,6 +28,10 @@ export const getBookById = asyncHandler(async (req, res) => {
   try {
     const book = await Book.findById(req.params.id).populate("reviews");
     if (book) {
+      let count = book.viewCount;
+      count = count + 1;
+      book.viewCount = count;
+      await book.save();
       res.status(200).json({ message: "Book found", book });
     } else {
       res.status(404).json({ message: "Book not found" });
@@ -41,7 +45,7 @@ export const getBookById = asyncHandler(async (req, res) => {
 // @route   POST /api/books
 // @access  Private
 export const addBook = asyncHandler(async (req, res) => {
-  const { title, author, description } = req.body;
+  const { title, author, description, category } = req.body;
 
   // if (!title || !author || !description) {
   //   return res.status(400).json({ message: "Please fill all required fields" });
@@ -52,6 +56,7 @@ export const addBook = asyncHandler(async (req, res) => {
       title,
       author,
       description,
+      category,
       user: req.userId,
     });
 
