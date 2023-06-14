@@ -1,6 +1,17 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { login, signup } from "../services/auth";
 
+const user = localStorage.getItem("user");
+const token = localStorage.getItem("token");
+
+const initialState = {
+  user: user ? JSON.parse(user) : null,
+  token: token,
+  isLoggedIn: false,
+  loading: false,
+  error: null,
+};
+
 // Async thunk action to handle user login
 export const loginUser = createAsyncThunk(
   "auth/login",
@@ -36,13 +47,15 @@ export const signupUser = createAsyncThunk(
 // Redux slice for auth state
 const authSlice = createSlice({
   name: "auth",
-  initialState: {
-    user: null,
-    loading: false,
-    error: null,
-  },
+  initialState,
   reducers: {
     // Additional reducers for managing the auth state if needed
+    setUserLoggedIn: (state) => {
+      state.isLoggedIn = true;
+    },
+    setUserLoggedOut: (state) => {
+      state.isLoggedIn = false;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -52,7 +65,12 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
+        const { userData, token } = action.payload;
+        localStorage.setItem("user", JSON.stringify(userData));
+        localStorage.setItem("token", token);
+        state.user = userData;
+        state.token = token;
+        state.isLoggedIn = true;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
@@ -65,6 +83,7 @@ const authSlice = createSlice({
       .addCase(signupUser.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
+        state.isLoggedIn = true;
       })
       .addCase(signupUser.rejected, (state, action) => {
         state.loading = false;

@@ -156,9 +156,9 @@ export const getReviews = asyncHandler(async (req, res) => {
 export const addReview = asyncHandler(async (req, res) => {
   const { comment, rating } = req.body;
 
-  if (!comment || !rating) {
-    return res.status(400).json({ message: "Please fill all required fields" });
-  }
+  // if (!comment || !rating) {
+  //   return res.status(400).json({ message: "Please fill all required fields" });
+  // }
 
   try {
     const book = await Book.findById(req.params.id);

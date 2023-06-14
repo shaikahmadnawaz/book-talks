@@ -58,12 +58,37 @@ export const getBook = createAsyncThunk(
   }
 );
 
+export const addReview = createAsyncThunk(
+  "books/addReview",
+  async ({ bookId, comment }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:5000/api/books/${bookId}/reviews`,
+        { comment },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      if (!error?.response) {
+        throw error;
+      }
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
 // Slice
 const bookSlice = createSlice({
   name: "books",
   initialState: {
     books: [],
-    book: {},
+    book: {
+      reviews: [],
+    },
     loading: false,
     error: null,
   },
@@ -106,6 +131,21 @@ const bookSlice = createSlice({
       })
       .addCase(addBook.rejected, (state, { payload }) => {
         state.loading = false;
+      });
+
+    // Add the addReview case to the extraReducers
+    builder
+      .addCase(addReview.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(addReview.fulfilled, (state, action) => {
+        state.loading = false;
+        // Update the book's reviews with the new review
+        state.book.reviews.push(action.payload.review);
+      })
+      .addCase(addReview.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
       });
   },
 });

@@ -2,11 +2,14 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { getBook } from "../../redux/bookSlice";
+import ReviewForm from "../reviews/ReviewForm";
 
 const BookDetails = () => {
   const dispatch = useDispatch();
   const { bookId } = useParams();
   const book = useSelector((store) => store.books.book);
+  const isUser = useSelector((store) => store.auth.user);
+  console.log(isUser, "is logged in");
 
   useEffect(() => {
     dispatch(getBook({ id: bookId }));
@@ -51,6 +54,28 @@ const BookDetails = () => {
             className="w-36 h-24 object-cover"
           />
         </div>
+        <div className="mb-4">
+          <h3 className="text-lg font-bold mb-2">Reviews</h3>
+          {book.reviews.length === 0 ? (
+            <p>No reviews available</p>
+          ) : (
+            <ul>
+              {book.reviews.map((review) => (
+                <li key={review._id}>
+                  <p>{review.comment}</p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+        {isUser ? (
+          <ReviewForm bookId={book._id} />
+        ) : (
+          <p>
+            To add a review, you need to login.{" "}
+            <span>Insert login link/button here.</span>
+          </p>
+        )}
       </div>
     </div>
   );

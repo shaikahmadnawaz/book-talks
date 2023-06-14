@@ -11,11 +11,11 @@ const ReviewSchema = new mongoose.Schema({
   },
   comment: {
     type: String,
-    required: true,
+    // required: true,
   },
   rating: {
     type: Number,
-    required: true,
+    // required: true,
   },
   date: {
     type: Date,
