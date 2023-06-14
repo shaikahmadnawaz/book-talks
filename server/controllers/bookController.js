@@ -1,4 +1,5 @@
 import asyncHandler from "express-async-handler";
+import User from "../models/User.js";
 import Book from "../models/Book.js";
 import Review from "../models/Review.js";
 import { uploadCoverImage } from "../middlewares/uploadMiddleware.js";
@@ -40,6 +41,21 @@ export const getBookById = asyncHandler(async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
+// Controller action to get the user's books
+export const getUserBooks = async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    const user = await User.findById(userId).populate("books");
+
+    // Return the user's books
+    res.json(user.books);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch user's books" });
+  }
+};
 
 // @desc    Add a new book
 // @route   POST /api/books

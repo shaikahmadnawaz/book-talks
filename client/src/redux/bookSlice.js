@@ -58,6 +58,28 @@ export const getBook = createAsyncThunk(
   }
 );
 
+export const fetchUserBooks = createAsyncThunk(
+  "books/fetchUserBooks",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        "http://localhost:5000/api/books/myBooks",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      if (!error?.response) {
+        throw error;
+      }
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
 export const addReview = createAsyncThunk(
   "books/addReview",
   async ({ bookId, comment }, { rejectWithValue }) => {
@@ -89,6 +111,7 @@ const bookSlice = createSlice({
     book: {
       reviews: [],
     },
+    userBooks: [],
     loading: false,
     error: null,
   },
@@ -144,6 +167,20 @@ const bookSlice = createSlice({
         state.book.reviews.push(action.payload.review);
       })
       .addCase(addReview.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
+
+    builder
+      .addCase(fetchUserBooks.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchUserBooks.fulfilled, (state, action) => {
+        state.loading = false;
+        state.userBooks = action.payload;
+        console.log(state.userBooks);
+      })
+      .addCase(fetchUserBooks.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });

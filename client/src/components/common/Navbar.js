@@ -10,6 +10,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     dispatch(logoutUser());
+    window.location.reload();
     navigate("/", { replace: true });
   };
 
@@ -32,14 +33,21 @@ const Navbar = () => {
               </Link>
             </li>
             {isLoggedIn ? (
-              <li>
-                <button
-                  onClick={handleLogout}
-                  className="hover:text-gray-300 cursor-pointer"
-                >
-                  Logout
-                </button>
-              </li>
+              <>
+                <li>
+                  <Link to="/profile" className="hover:text-gray-300">
+                    Profile
+                  </Link>
+                </li>
+                <li>
+                  <button
+                    onClick={handleLogout}
+                    className="hover:text-gray-300 cursor-pointer"
+                  >
+                    Logout
+                  </button>
+                </li>
+              </>
             ) : (
               <>
                 <li>

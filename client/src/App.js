@@ -23,6 +23,7 @@ function App() {
         <Route path="/books/new" element={<BookForm />} />
         <Route path="/books/:bookId" element={<BookDetail />} />
         <Route path="/profile" element={<UserProfile />} />
+
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
       <Footer />

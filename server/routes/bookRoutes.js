@@ -10,12 +10,14 @@ import {
   updateReview,
   deleteReview,
   getReviews,
+  getUserBooks,
 } from "../controllers/bookController.js";
 
 const router = express.Router();
 
 // Public routes
 router.get("/", getBooks);
+router.get("/myBooks", protect, getUserBooks);
 router.get("/:id", getBookById);
 
 // Protected routes
