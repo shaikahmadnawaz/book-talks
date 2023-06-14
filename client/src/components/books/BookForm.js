@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { fetchBooks } from "../../redux/bookSlice";
+import { fetchBooks, addBook } from "../../redux/bookSlice";
 
 const BookForm = () => {
   const dispatch = useDispatch();
@@ -26,20 +26,10 @@ const BookForm = () => {
     formData.append("coverImage", coverImage);
     formData.append("category", category);
 
-    // Obtain the authorization token from your client application
-    const token = localStorage.getItem("token"); // Assuming the token is stored in local storage
-
-    // Make a POST request to your server with the form data and include the authorization token in the headers
-    fetch("http://localhost:5000/api/books", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`, // Include the token in the Authorization header
-      },
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data); // Handle the response from the server
+    // Dispatch the addBook async thunk action
+    dispatch(addBook(formData))
+      .unwrap()
+      .then(() => {
         // Fetch the updated books after successful submission
         dispatch(fetchBooks());
       })

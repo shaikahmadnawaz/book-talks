@@ -13,11 +13,11 @@ export const fetchBooks = createAsyncThunk("books/fetchBooks", async () => {
 });
 
 export const addBook = createAsyncThunk(
-  "api/books",
+  "api/addBooks",
   async (payload, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        `http://localhost:5000/books/`,
+        `http://localhost:5000/api/books/`,
         payload,
         {
           headers: {
@@ -58,7 +58,6 @@ export const getBook = createAsyncThunk(
   }
 );
 
-// Slice
 // Slice
 const bookSlice = createSlice({
   name: "books",
