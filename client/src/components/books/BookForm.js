@@ -109,10 +109,24 @@ const BookForm = () => {
               -- SELECT --
             </option>
             <option value="fiction">Fiction</option>
+            <option value="non-fiction">Non-fiction</option>
+            <option value="mystery">Mystery</option>
             <option value="romance">Romance</option>
             <option value="biography">Biography</option>
+            <option value="history">History</option>
+            <option value="business">Business</option>
+            <option value="self-help">Self-help</option>
+            <option value="science-fiction">Science Fiction</option>
+            <option value="fantasy">Fantasy</option>
+            <option value="thriller">Thriller</option>
+            <option value="horror">Horror</option>
+            <option value="children">Children</option>
+            <option value="young-adult">Young Adult</option>
+            <option value="comics">Comics</option>
+            <option value="art">Art</option>
+            <option value="cookbooks">Cookbooks</option>
+            <option value="journals">Journals</option>
             <option value="poetry">Poetry</option>
-            <option value="crime">Crime</option>
           </select>
         </div>
         <div className="mb-4">
