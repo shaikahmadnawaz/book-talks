@@ -13,21 +13,21 @@ const UserBooks = () => {
   }, [dispatch]);
 
   if (loading) {
-    return <div>Loading user books...</div>;
+    return <div className="text-center">Loading user books...</div>;
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div className="text-center">Error: {error}</div>;
   }
 
   return (
     <div>
-      <h2>User Books</h2>
+      <h2 className="text-2xl font-bold mb-4">User Books</h2>
       {userBooks.map((book) => (
-        <div key={book.id}>
-          <h3>{book.title}</h3>
-          <p>{book.author}</p>
-          <p>{book.description}</p>
+        <div key={book.id} className="bg-white p-4 mb-4 shadow">
+          <h3 className="text-lg font-bold mb-2">{book.title}</h3>
+          <p className="text-gray-600 mb-2">Author: {book.author}</p>
+          <p className="text-gray-600">{book.description}</p>
         </div>
       ))}
     </div>

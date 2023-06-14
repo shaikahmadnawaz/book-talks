@@ -103,6 +103,51 @@ export const addReview = createAsyncThunk(
   }
 );
 
+export const deleteReview = createAsyncThunk(
+  "books/deleteReview",
+  async ({ bookId, reviewId }, { rejectWithValue }) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:5000/api/books/${bookId}/reviews/${reviewId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      if (!error?.response) {
+        throw error;
+      }
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
+export const editReview = createAsyncThunk(
+  "books/editReview",
+  async ({ bookId, reviewId, comment }, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/api/books/${bookId}/reviews/${reviewId}`,
+        { comment },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      if (!error?.response) {
+        throw error;
+      }
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
 // Slice
 const bookSlice = createSlice({
   name: "books",
@@ -181,6 +226,41 @@ const bookSlice = createSlice({
         console.log(state.userBooks);
       })
       .addCase(fetchUserBooks.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
+
+    builder
+      .addCase(deleteReview.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteReview.fulfilled, (state, action) => {
+        state.loading = false;
+        // Remove the deleted review from the book's reviews
+        state.book.reviews = state.book.reviews.filter(
+          (review) => review._id !== action.payload.reviewId
+        );
+      })
+      .addCase(deleteReview.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
+
+    builder
+      .addCase(editReview.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(editReview.fulfilled, (state, action) => {
+        state.loading = false;
+        // Find the edited review and update its comment
+        state.book.reviews = state.book.reviews.map((review) => {
+          if (review._id === action.payload.review._id) {
+            return { ...review, comment: action.payload.review.comment };
+          }
+          return review;
+        });
+      })
+      .addCase(editReview.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });
