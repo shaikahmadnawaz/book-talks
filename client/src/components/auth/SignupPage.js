@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { signupUser } from "../../redux/authSlice";
+import { useNavigate } from "react-router-dom";
 
 const SignupPage = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const loading = useSelector((state) => state.auth.loading);
   const error = useSelector((state) => state.auth.error);
@@ -11,16 +13,24 @@ const SignupPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
 
     // Dispatch the signupUser async thunk action
-    dispatch(signupUser({ name, email, password }));
+    await dispatch(signupUser({ name, email, password }));
 
     // Clear the input fields
     setName("");
     setEmail("");
     setPassword("");
+
+    // Check if signup was successful
+    const signUpSuccessful = !error;
+
+    // If signup was successful, navigate to the login page
+    if (signUpSuccessful) {
+      navigate("/login");
+    }
   };
 
   return (
