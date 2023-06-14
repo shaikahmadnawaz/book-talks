@@ -44,18 +44,20 @@ export const signupUser = createAsyncThunk(
   }
 );
 
+// Async thunk action to handle user logout
+export const logoutUser = createAsyncThunk("auth/logout", async () => {
+  // Clear local storage and reset the state
+  localStorage.removeItem("user");
+  localStorage.removeItem("token");
+  return null;
+});
+
 // Redux slice for auth state
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
     // Additional reducers for managing the auth state if needed
-    setUserLoggedIn: (state) => {
-      state.isLoggedIn = true;
-    },
-    setUserLoggedOut: (state) => {
-      state.isLoggedIn = false;
-    },
   },
   extraReducers: (builder) => {
     builder
@@ -88,6 +90,11 @@ const authSlice = createSlice({
       .addCase(signupUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.user = null;
+        state.token = null;
+        state.isLoggedIn = false;
       });
   },
 });

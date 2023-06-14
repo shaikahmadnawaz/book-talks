@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../../redux/authSlice";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const user = useSelector((state) => state.auth.user);
   const loading = useSelector((state) => state.auth.loading);
   const error = useSelector((state) => state.auth.error);
 
@@ -13,6 +17,11 @@ const LoginPage = () => {
   const handleLogin = (e) => {
     e.preventDefault();
 
+    if (!email || !password) {
+      alert("Fill all the details");
+      return;
+    }
+
     // Dispatch the loginUser async thunk action
     dispatch(loginUser({ email, password }));
 
@@ -20,6 +29,12 @@ const LoginPage = () => {
     setEmail("");
     setPassword("");
   };
+
+  useEffect(() => {
+    if (user) {
+      navigate("/books", { replace: true });
+    }
+  }, [user, navigate]);
 
   return (
     <div className="flex justify-center items-center h-screen">

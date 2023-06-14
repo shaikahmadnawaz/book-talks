@@ -8,10 +8,13 @@ import BookDetail from "./components/books/BookDetail";
 import UserProfile from "./components/user/UserProfile";
 import NotFoundPage from "./pages/NotFoundPage";
 import BookForm from "./components/books/BookForm";
+import Navbar from "./components/common/Navbar";
+import Footer from "./components/common/Footer";
 
 function App() {
   return (
     <Router>
+      <Navbar />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -22,6 +25,7 @@ function App() {
         <Route path="/profile" element={<UserProfile />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      <Footer />
     </Router>
   );
 }
