@@ -201,14 +201,14 @@ const bookSlice = createSlice({
         state.loading = false;
       });
 
-    // Add the addReview case to the extraReducers
+    // Adding the addReview case to the extraReducers
     builder
       .addCase(addReview.pending, (state) => {
         state.loading = true;
       })
       .addCase(addReview.fulfilled, (state, action) => {
         state.loading = false;
-        // Update the book's reviews with the new review
+        // Updating the book's reviews with the new review
         state.book.reviews.push(action.payload.review);
       })
       .addCase(addReview.rejected, (state, action) => {
@@ -236,7 +236,7 @@ const bookSlice = createSlice({
       })
       .addCase(deleteReview.fulfilled, (state, action) => {
         state.loading = false;
-        // Remove the deleted review from the book's reviews
+        // Removing the deleted review from the book's reviews
         state.book.reviews = state.book.reviews.filter(
           (review) => review._id !== action.payload.reviewId
         );
@@ -252,7 +252,7 @@ const bookSlice = createSlice({
       })
       .addCase(editReview.fulfilled, (state, action) => {
         state.loading = false;
-        // Find the edited review and update its comment
+        // Finding the edited review and update its comment
         state.book.reviews = state.book.reviews.map((review) => {
           if (review._id === action.payload.review._id) {
             return { ...review, comment: action.payload.review.comment };

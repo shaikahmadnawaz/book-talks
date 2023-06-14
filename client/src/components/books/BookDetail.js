@@ -14,6 +14,8 @@ const BookDetails = () => {
   const dispatch = useDispatch();
   const { bookId } = useParams();
   const book = useSelector((store) => store.books.book);
+  const reviews = useSelector((store) => store.books.book.reviews);
+  console.log(reviews);
   const isUser = useSelector((store) => store.auth.user);
   const [editingReviewId, setEditingReviewId] = useState(null);
   const [editReviewText, setEditReviewText] = useState("");
@@ -105,7 +107,7 @@ const BookDetails = () => {
                       <p className="text-gray-600">{review.comment}</p>
                       {isUser && (
                         <div className="flex items-center mt-2">
-                          {isUser._id === review.userId && (
+                          {isUser._id === review.user && (
                             <>
                               <button
                                 onClick={() => setEditingReviewId(review._id)}
