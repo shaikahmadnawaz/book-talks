@@ -45,7 +45,7 @@ export const getBookById = asyncHandler(async (req, res) => {
 // Controller action to get the user's books
 export const getUserBooks = async (req, res) => {
   try {
-    const userId = req.userId; // Assuming you have authentication middleware to attach the user ID to the request object
+    const userId = req.userId;
 
     const user = await User.findById(userId).populate("books");
 

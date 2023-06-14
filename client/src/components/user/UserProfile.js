@@ -1,5 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import UserBooks from "./UserBooks";
 
 const UserProfile = () => {
   const user = useSelector((state) => state.auth.user);
@@ -15,6 +16,8 @@ const UserProfile = () => {
       ) : (
         <p>No user profile found.</p>
       )}
+
+      <UserBooks />
     </div>
   );
 };

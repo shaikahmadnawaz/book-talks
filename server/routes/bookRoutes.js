@@ -17,11 +17,11 @@ const router = express.Router();
 
 // Public routes
 router.get("/", getBooks);
+router.get("/myBooks", protect, getUserBooks);
 router.get("/:id", getBookById);
 
 // Protected routes
 router.post("/", protect, addBook);
-router.get("/user", protect, getUserBooks);
 router.patch("/:id", protect, updateBook);
 router.delete("/:id", protect, deleteBook);
 router.post("/:id/reviews", protect, addReview);

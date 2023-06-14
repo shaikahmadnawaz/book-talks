@@ -62,11 +62,14 @@ export const fetchUserBooks = createAsyncThunk(
   "books/fetchUserBooks",
   async (payload, { rejectWithValue }) => {
     try {
-      const response = await axios.get("http://localhost:5000/api/books/user", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await axios.get(
+        "http://localhost:5000/api/books/myBooks",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
       return response.data;
     } catch (error) {
       if (!error?.response) {

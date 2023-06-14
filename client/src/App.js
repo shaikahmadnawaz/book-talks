@@ -10,7 +10,6 @@ import NotFoundPage from "./pages/NotFoundPage";
 import BookForm from "./components/books/BookForm";
 import Navbar from "./components/common/Navbar";
 import Footer from "./components/common/Footer";
-import UserBooks from "./components/user/UserBooks";
 
 function App() {
   return (
@@ -24,7 +23,7 @@ function App() {
         <Route path="/books/new" element={<BookForm />} />
         <Route path="/books/:bookId" element={<BookDetail />} />
         <Route path="/profile" element={<UserProfile />} />
-        <Route path="/profile/books" element={<UserBooks />} />
+
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
       <Footer />
