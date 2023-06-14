@@ -22,17 +22,17 @@ const LoginPage = () => {
       return;
     }
 
-    // Dispatch the loginUser async thunk action
+    // Dispatching the loginUser async thunk action
     dispatch(loginUser({ email, password }));
 
-    // Clear the input fields
+    // Clearing the input fields
     setEmail("");
     setPassword("");
   };
 
   useEffect(() => {
     if (user) {
-      navigate("/books", { replace: true });
+      navigate("/", { replace: true });
     }
   }, [user, navigate]);
 

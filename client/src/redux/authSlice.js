@@ -16,7 +16,6 @@ const initialState = {
 export const loginUser = createAsyncThunk(
   "auth/login",
   async ({ email, password }) => {
-    console.log({ email, password });
     try {
       const response = await login(email, password);
       // Save the token to local storage
