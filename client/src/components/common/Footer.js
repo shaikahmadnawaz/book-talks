@@ -4,7 +4,7 @@ import { BsFillJournalBookmarkFill } from "react-icons/bs";
 
 const Footer = () => {
   return (
-    <footer className="relative overflow-hidden bg-white py-8">
+    <footer className="relative border-t-2 border-black overflow-hidden bg-white py-8">
       <div className="container relative z-10 mx-auto px-4">
         <div className="-m-8 flex flex-wrap items-center justify-between">
           <div className="w-full flex justify-between p-8">

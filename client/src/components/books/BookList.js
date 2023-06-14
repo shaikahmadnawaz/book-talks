@@ -22,8 +22,19 @@ const BookList = () => {
   }
 
   return (
-    <div className="px-8">
-      <h2 className="text-2xl font-bold m-4 text-center">Books List</h2>
+    <div className="p-8">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold m-4 text-center">Books List</h2>
+        <div className="flex justify-center m-4">
+          <Link
+            to="/new"
+            className="rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+          >
+            Add New Book
+          </Link>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 justify-center md:grid-cols-2 gap-8 lg:grid-cols-4">
         {books &&
           books.map((book) => (
@@ -44,7 +55,7 @@ const BookList = () => {
                   <p className="leading-relaxed mb-3">{book.description}</p>
                   <div className="flex items-center flex-wrap">
                     <Link
-                      to={`/books/${book._id}`}
+                      to={`/${book._id}`}
                       className="text-secondary bg-primary p-2 rounded-sm inline-flex items-center md:mb-2 lg:mb-0 cursor-pointer"
                     >
                       Read More
