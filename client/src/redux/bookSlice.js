@@ -149,6 +149,29 @@ export const editReview = createAsyncThunk(
   }
 );
 
+export const addRating = createAsyncThunk(
+  "books/addRating",
+  async ({ bookId, rating, reviewId }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:5000/api/books/${bookId}/reviews/${reviewId}`,
+        { rating },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      if (!error?.response) {
+        throw error;
+      }
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
 // Slice
 const bookSlice = createSlice({
   name: "books",
@@ -268,6 +291,25 @@ const bookSlice = createSlice({
       })
 
       .addCase(editReview.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
+
+    builder
+      .addCase(addRating.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(addRating.fulfilled, (state, action) => {
+        state.loading = false;
+        // Find the review by reviewId and update its rating
+        const review = state.book.reviews.find(
+          (review) => review.id === action.payload.reviewId
+        );
+        if (review) {
+          review.rating = action.payload.rating;
+        }
+      })
+      .addCase(addRating.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });
