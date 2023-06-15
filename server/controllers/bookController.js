@@ -237,18 +237,9 @@ export const deleteReview = asyncHandler(async (req, res) => {
     }
 
     const reviewId = req.params.reviewId;
-    const filteredReviews = book.reviews.filter(
-      (review) => review._id.toString() !== reviewId.toString()
-    );
+    const response = await Review.findByIdAndDelete(reviewId);
 
-    if (filteredReviews.length === book.reviews.length) {
-      return res.status(404).json({ message: "Review not found" });
-    }
-
-    book.reviews = filteredReviews;
-    await book.save();
-
-    res.json({ message: "Review removed" });
+    res.status(201).json({ message: "Review removed" });
   } catch (error) {
     res
       .status(500)

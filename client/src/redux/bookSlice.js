@@ -130,7 +130,7 @@ export const editReview = createAsyncThunk(
   "books/editReview",
   async ({ bookId, reviewId, comment }, { rejectWithValue }) => {
     try {
-      const response = await axios.put(
+      const response = await axios.patch(
         `http://localhost:5000/api/books/${bookId}/reviews/${reviewId}`,
         { comment },
         {
