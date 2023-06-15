@@ -38,7 +38,7 @@ const BookForm = () => {
   return (
     <section className="bg-white">
       <div className="py-8 px-4 mx-auto max-w-2xl lg:py-16">
-        <h2 className="mb-4 text-xl font-bold text-black">Add a book</h2>
+        <h2 className="mb-4 text-xl font-bold text-black">Add a Book</h2>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 sm:grid-cols-2 border-2 border-primary rounded-lg p-4 sm:gap-6">
             <div className="sm:col-span-2">
@@ -52,7 +52,7 @@ const BookForm = () => {
                 type="text"
                 name="title"
                 id="title"
-                className="border text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-white border-black placeholder-gray-500 caret-black text-black focus:ring-primary-500 border-primary-500"
+                className="border text-sm rounded-lg focus:outline-none focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-white border-black placeholder-gray-500 text-black"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Type book title"
@@ -70,7 +70,7 @@ const BookForm = () => {
                 type="text"
                 name="author"
                 id="author"
-                className="bg-white border border-black text-black text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 placeholder-gray-500 caret-black block w-full p-2.5"
+                className="bg-white border border-black text-black text-sm rounded-lg focus:outline-none focus:ring-primary-600 focus:border-primary-600 placeholder-gray-500 caret-black block w-full p-2.5"
                 value={author}
                 onChange={(e) => setAuthor(e.target.value)}
                 placeholder="Book author"
@@ -87,7 +87,7 @@ const BookForm = () => {
               <textarea
                 id="description"
                 rows="8"
-                className="block p-2.5 w-full text-sm text-black bg-white rounded-lg border border-black placeholder-gray-500 caret-black focus:ring-primary-500 focus:border-primary-500 "
+                className="block p-2.5 w-full text-sm text-black bg-white rounded-lg border border-black placeholder-gray-500 caret-black focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Your description here"
@@ -102,7 +102,7 @@ const BookForm = () => {
               </label>
               <select
                 id="category"
-                className="bg-white border border-black text-black text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
+                className="bg-white border border-black text-black text-sm rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
               >
@@ -142,14 +142,14 @@ const BookForm = () => {
                 name="coverImage"
                 id="coverImage"
                 accept="image/*"
-                className="bg-white border border-black text-black text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                className="bg-white border border-black text-black text-sm rounded-lg focus:outline-none focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                 onChange={handleFileChange}
               />
             </div>
           </div>
           <button
             type="submit"
-            className="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-primary rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800"
+            className="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-white bg-primary rounded-lg focus:outline-none focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800"
           >
             Add Book
           </button>
