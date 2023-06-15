@@ -107,7 +107,7 @@ const BookDetails = () => {
             {reviews.map((review) => (
               <li key={review._id} className="mb-2">
                 <p className="text-gray-600">{review.comment}</p>
-                {isUser && (
+                {isUser && isUser._id === review.user && (
                   <div className="flex items-center mt-1">
                     {editingReviewId === review._id ? (
                       <>
@@ -182,7 +182,7 @@ const BookDetails = () => {
         ) : (
           <p>No reviews yet.</p>
         )}
-        <Link to="/books" className="text-blue-500 mt-4 block">
+        <Link to="/" className="text-blue-500 mt-4 block">
           Back to Books
         </Link>
       </div>

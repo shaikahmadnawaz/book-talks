@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getAllBooks } from "../services/book";
 import axios from "axios";
+import { BASE_URL } from "../config/url";
 
 // Async thunk action to fetch all books
 export const fetchBooks = createAsyncThunk("books/fetchBooks", async () => {
@@ -16,15 +17,11 @@ export const addBook = createAsyncThunk(
   "api/addBooks",
   async (payload, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `http://localhost:5000/api/books/`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const response = await axios.post(`${BASE_URL}/api/books/`, payload, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       return response.data;
     } catch (error) {
       if (!error?.response) {
@@ -39,14 +36,11 @@ export const getBook = createAsyncThunk(
   "api/books/:id",
   async (payload, { rejectWithValue }) => {
     try {
-      const response = await axios.get(
-        `http://localhost:5000/api/books/${payload.id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const response = await axios.get(`${BASE_URL}/api/books/${payload.id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
 
       return response.data;
     } catch (error) {
@@ -62,14 +56,11 @@ export const fetchUserBooks = createAsyncThunk(
   "books/fetchUserBooks",
   async (payload, { rejectWithValue }) => {
     try {
-      const response = await axios.get(
-        "http://localhost:5000/api/books/myBooks",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const response = await axios.get(`${BASE_URL}/api/books/myBooks`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       return response.data;
     } catch (error) {
       if (!error?.response) {
@@ -86,7 +77,7 @@ export const addReview = createAsyncThunk(
     try {
       console.log(bookId, comment, rating);
       const response = await axios.post(
-        `http://localhost:5000/api/books/${bookId}/reviews`,
+        `${BASE_URL}/api/books/${bookId}/reviews`,
         { comment, rating },
         {
           headers: {
@@ -110,7 +101,7 @@ export const deleteReview = createAsyncThunk(
     try {
       console.log(bookId, reviewId);
       const response = await axios.delete(
-        `http://localhost:5000/api/books/${bookId}/reviews/${reviewId}`,
+        `${BASE_URL}/api/books/${bookId}/reviews/${reviewId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -132,7 +123,7 @@ export const editReview = createAsyncThunk(
   async ({ bookId, reviewId, comment, rating }, { rejectWithValue }) => {
     try {
       const response = await axios.patch(
-        `http://localhost:5000/api/books/${bookId}/reviews/${reviewId}`,
+        `${BASE_URL}/api/books/${bookId}/reviews/${reviewId}`,
         { comment, rating },
         {
           headers: {

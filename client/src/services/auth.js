@@ -1,9 +1,10 @@
 import axios from "axios";
+import { BASE_URL } from "../config/url";
 
 // Function to make login API request
 export const login = async (email, password) => {
   try {
-    const response = await axios.post("http://localhost:5000/api/auth/login", {
+    const response = await axios.post(`${BASE_URL}/api/auth/login`, {
       email,
       password,
     });
@@ -17,7 +18,7 @@ export const login = async (email, password) => {
 // Function to make signup API request
 export const signup = async (name, email, password) => {
   try {
-    const response = await axios.post("http://localhost:5000/api/auth/signup", {
+    const response = await axios.post(`${BASE_URL}/api/auth/signup`, {
       name,
       email,
       password,
