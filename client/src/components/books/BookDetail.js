@@ -29,14 +29,45 @@ const BookDetails = () => {
   };
 
   const handleDeleteReview = (reviewId) => {
-    dispatch(deleteReview({ bookId, reviewId }));
+    dispatch(deleteReview({ bookId, reviewId }))
+      .then(() => {
+        // Review deletion successful, update the UI
+        dispatch(getBook({ id: bookId }));
+      })
+      .catch((error) => {
+        // Handle error
+        console.error("Error deleting review:", error);
+      });
   };
 
   const handleEditReview = (reviewId, comment) => {
-    dispatch(editReview({ bookId, reviewId, comment }));
     setEditingReviewId(null);
-    setEditReviewText("");
+    const reviewToEdit = reviews.find((review) => review._id === reviewId);
+    if (reviewToEdit) {
+      dispatch(editReview({ bookId, reviewId, comment }))
+        .then(() => {
+          // Review update successful, update the UI
+          dispatch(getBook({ id: bookId }));
+        })
+        .catch((error) => {
+          // Handle error
+          console.error("Error editing review:", error);
+        });
+    } else {
+      console.error("Review not found");
+    }
   };
+
+  useEffect(() => {
+    if (editingReviewId !== null) {
+      const reviewToEdit = reviews.find(
+        (review) => review._id === editingReviewId
+      );
+      if (reviewToEdit) {
+        setEditReviewText(reviewToEdit.comment);
+      }
+    }
+  }, [editingReviewId, reviews]);
 
   if (!book) {
     return <p>Book not found</p>;
@@ -105,24 +136,20 @@ const BookDetails = () => {
                   ) : (
                     <>
                       <p className="text-gray-600">{review.comment}</p>
-                      {isUser && (
+                      {isUser && isUser._id === review.user && (
                         <div className="flex items-center mt-2">
-                          {isUser._id === review.user && (
-                            <>
-                              <button
-                                onClick={() => setEditingReviewId(review._id)}
-                                className="text-blue-500 font-bold mr-2"
-                              >
-                                Edit
-                              </button>
-                              <button
-                                onClick={() => handleDeleteReview(review._id)}
-                                className="text-red-500 font-bold"
-                              >
-                                Delete
-                              </button>
-                            </>
-                          )}
+                          <button
+                            onClick={() => setEditingReviewId(review._id)}
+                            className="text-blue-500 font-bold mr-2"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteReview(review._id)}
+                            className="text-red-500 font-bold"
+                          >
+                            Delete
+                          </button>
                         </div>
                       )}
                     </>
@@ -141,7 +168,7 @@ const BookDetails = () => {
               <Link
                 to="/login"
                 title=""
-                class="font-medium text-black transition-all duration-200 hover:underline"
+                className="font-medium text-black transition-all duration-200 hover:underline"
               >
                 Log In
               </Link>

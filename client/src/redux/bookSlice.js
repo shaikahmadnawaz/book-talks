@@ -253,14 +253,20 @@ const bookSlice = createSlice({
       })
       .addCase(editReview.fulfilled, (state, action) => {
         state.loading = false;
-        // Finding the edited review and update its comment
-        state.book.reviews = state.book.reviews.map((review) => {
-          if (review._id === action.payload.review._id) {
-            return { ...review, comment: action.payload.review.comment };
-          }
-          return review;
-        });
+        const editedReview = action.payload?.review;
+        if (editedReview) {
+          // Finding the edited review and update its comment
+          state.book.reviews = state.book.reviews.map((review) => {
+            if (review._id === editedReview._id) {
+              return { ...review, comment: editedReview.comment };
+            }
+            return review;
+          });
+        } else {
+          console.error("Edited review not found");
+        }
       })
+
       .addCase(editReview.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
