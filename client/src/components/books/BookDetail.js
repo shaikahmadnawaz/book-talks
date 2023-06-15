@@ -18,13 +18,13 @@ const BookDetails = () => {
   const isUser = useSelector((store) => store.auth.user);
   const [editingReviewId, setEditingReviewId] = useState(null);
   const [editReviewText, setEditReviewText] = useState("");
-  const [rating, setRating] = useState(0);
+  const [editReviewRating, setEditReviewRating] = useState(0);
 
   useEffect(() => {
     dispatch(getBook({ id: bookId }));
   }, [dispatch, bookId]);
 
-  const handleAddReview = (comment) => {
+  const handleAddReview = (comment, rating) => {
     dispatch(addReview({ bookId, comment, rating }));
   };
 
@@ -38,11 +38,11 @@ const BookDetails = () => {
       });
   };
 
-  const handleEditReview = (reviewId, comment) => {
+  const handleEditReview = (reviewId, comment, rating) => {
     setEditingReviewId(null);
     const reviewToEdit = reviews.find((review) => review._id === reviewId);
     if (reviewToEdit) {
-      dispatch(editReview({ bookId, reviewId, comment }))
+      dispatch(editReview({ bookId, reviewId, comment, rating }))
         .then(() => {
           dispatch(getBook({ id: bookId }));
         })
@@ -54,10 +54,6 @@ const BookDetails = () => {
     }
   };
 
-  const handleRatingChange = (newRating) => {
-    setRating(newRating);
-  };
-
   useEffect(() => {
     if (editingReviewId !== null) {
       const reviewToEdit = reviews.find(
@@ -65,6 +61,7 @@ const BookDetails = () => {
       );
       if (reviewToEdit) {
         setEditReviewText(reviewToEdit.comment);
+        setEditReviewRating(reviewToEdit.rating);
       }
     }
   }, [editingReviewId, reviews]);
@@ -78,28 +75,19 @@ const BookDetails = () => {
       <div className="max-w-2xl mx-auto">
         <h2 className="text-3xl font-bold mb-4">{book.title}</h2>
         <div className="mb-4">
-          <label
-            className="block text-gray-700 font-bold mb-2"
-            htmlFor="author"
-          >
+          <label className="text-gray-700 font-bold mb-2" htmlFor="author">
             Author:
           </label>
           <p className="text-gray-600">{book.author}</p>
         </div>
         <div className="mb-4">
-          <label
-            className="block text-gray-700 font-bold mb-2"
-            htmlFor="description"
-          >
+          <label className="text-gray-700 font-bold mb-2" htmlFor="description">
             Description:
           </label>
           <p className="text-gray-600">{book.description}</p>
         </div>
         <div className="mb-4">
-          <label
-            className="block text-gray-700 font-bold mb-2"
-            htmlFor="coverImage"
-          >
+          <label className="text-gray-700 font-bold mb-2" htmlFor="coverImage">
             Cover Image:
           </label>
           <img
@@ -110,12 +98,7 @@ const BookDetails = () => {
         </div>
         {isUser && (
           <div className="mb-4">
-            <ReviewForm
-              bookId={book._id}
-              onSubmit={handleAddReview}
-              rating={rating}
-              onRatingChange={handleRatingChange}
-            />
+            <ReviewForm bookId={book._id} onSubmit={handleAddReview} />
           </div>
         )}
         <h3 className="text-xl font-bold mb-2">Reviews:</h3>
@@ -129,15 +112,33 @@ const BookDetails = () => {
                     {editingReviewId === review._id ? (
                       <>
                         <input
-                          className="border rounded-l px-2 py-1"
+                          className="border rounded-l px-2 py-1 mr-1"
                           type="text"
                           value={editReviewText}
                           onChange={(e) => setEditReviewText(e.target.value)}
                         />
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <button
+                            key={star}
+                            type="button"
+                            onClick={() => setEditReviewRating(star)}
+                            className={`text-2xl ${
+                              star <= editReviewRating
+                                ? "text-yellow-500"
+                                : "text-gray-400"
+                            }`}
+                          >
+                            ★
+                          </button>
+                        ))}
                         <button
                           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded-r"
                           onClick={() =>
-                            handleEditReview(review._id, editReviewText)
+                            handleEditReview(
+                              review._id,
+                              editReviewText,
+                              editReviewRating
+                            )
                           }
                         >
                           Save
@@ -168,7 +169,7 @@ const BookDetails = () => {
                       className={`${
                         star <= review.rating
                           ? "text-yellow-500"
-                          : "text-gray-300"
+                          : "text-gray-400"
                       }`}
                     >
                       ★

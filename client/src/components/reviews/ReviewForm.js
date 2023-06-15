@@ -5,19 +5,21 @@ import { addReview } from "../../redux/bookSlice";
 const ReviewForm = ({ bookId }) => {
   const dispatch = useDispatch();
   const [comment, setComment] = useState("");
+  const [rating, setRating] = useState(0);
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     // Dispatch the addReview action with the review data
-    dispatch(addReview({ bookId, comment }));
+    dispatch(addReview({ bookId, comment, rating }));
 
-    // Clear the comment field after submission
+    // Clear the comment and rating fields after submission
     setComment("");
+    setRating(0);
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="mb-8">
       <div className="mb-4">
         <label className="block text-gray-700 font-bold mb-2" htmlFor="comment">
           Add Review:
@@ -30,6 +32,23 @@ const ReviewForm = ({ bookId }) => {
           onChange={(e) => setComment(e.target.value)}
           required
         ></textarea>
+      </div>
+      <div className="flex items-center mb-4">
+        <label className="block text-gray-700 font-bold mr-2" htmlFor="rating">
+          Rating:
+        </label>
+        {[1, 2, 3, 4, 5].map((star) => (
+          <button
+            key={star}
+            type="button"
+            onClick={() => setRating(star)}
+            className={`text-2xl ${
+              star <= rating ? "text-yellow-500" : "text-gray-400"
+            }`}
+          >
+            ★
+          </button>
+        ))}
       </div>
       <button
         type="submit"

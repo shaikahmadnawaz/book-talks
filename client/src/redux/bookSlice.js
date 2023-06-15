@@ -82,12 +82,12 @@ export const fetchUserBooks = createAsyncThunk(
 
 export const addReview = createAsyncThunk(
   "books/addReview",
-  async ({ bookId, comment }, { rejectWithValue }) => {
+  async ({ bookId, comment, rating }, { rejectWithValue }) => {
     try {
-      console.log(bookId, comment);
+      console.log(bookId, comment, rating);
       const response = await axios.post(
         `http://localhost:5000/api/books/${bookId}/reviews`,
-        { comment },
+        { comment, rating },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -129,34 +129,11 @@ export const deleteReview = createAsyncThunk(
 
 export const editReview = createAsyncThunk(
   "books/editReview",
-  async ({ bookId, reviewId, comment }, { rejectWithValue }) => {
+  async ({ bookId, reviewId, comment, rating }, { rejectWithValue }) => {
     try {
       const response = await axios.patch(
         `http://localhost:5000/api/books/${bookId}/reviews/${reviewId}`,
-        { comment },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      return response.data;
-    } catch (error) {
-      if (!error?.response) {
-        throw error;
-      }
-      return rejectWithValue(error?.response?.data);
-    }
-  }
-);
-
-export const addRating = createAsyncThunk(
-  "books/addRating",
-  async ({ bookId, rating, reviewId }, { rejectWithValue }) => {
-    try {
-      const response = await axios.post(
-        `http://localhost:5000/api/books/${bookId}/reviews/${reviewId}`,
-        { rating },
+        { comment, rating },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -292,25 +269,6 @@ const bookSlice = createSlice({
       })
 
       .addCase(editReview.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-      });
-
-    builder
-      .addCase(addRating.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(addRating.fulfilled, (state, action) => {
-        state.loading = false;
-        // Find the review by reviewId and update its rating
-        const review = state.book.reviews.find(
-          (review) => review.id === action.payload.reviewId
-        );
-        if (review) {
-          review.rating = action.payload.rating;
-        }
-      })
-      .addCase(addRating.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });
