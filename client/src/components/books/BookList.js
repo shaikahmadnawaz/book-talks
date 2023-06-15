@@ -2,10 +2,12 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchBooks } from "../../redux/bookSlice";
 import { Link } from "react-router-dom";
+import { MdOutlineRateReview } from "react-icons/md";
 
 const BookList = () => {
   const dispatch = useDispatch();
   const books = useSelector((state) => state.books.books);
+  console.log(books);
   const loading = useSelector((state) => state.books.loading);
   const error = useSelector((state) => state.books.error);
 
@@ -88,18 +90,8 @@ const BookList = () => {
                       {book.viewCount}
                     </span>
                     <span className="text-gray-400 inline-flex items-center leading-none text-sm">
-                      <svg
-                        className="w-4 h-4 mr-1"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        fill="none"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M2 12s4-4 10-4 10 4 10 4-4 4-10 4-10-4-10-4zm10 3c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4zm0 6a7.33 7.33 0 01-4-1.22 2.92 2.92 0 004 0A7.33 7.33 0 0112 21z"></path>
-                      </svg>
-                      6
+                      <MdOutlineRateReview className="w-4 h-4 mr-1" />
+                      {book.reviews.length}
                     </span>
                   </div>
                 </div>

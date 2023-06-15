@@ -15,28 +15,56 @@ const BookDetails = () => {
   const { bookId } = useParams();
   const book = useSelector((store) => store.books.book);
   const reviews = useSelector((store) => store.books.book.reviews);
-  console.log(reviews);
   const isUser = useSelector((store) => store.auth.user);
   const [editingReviewId, setEditingReviewId] = useState(null);
   const [editReviewText, setEditReviewText] = useState("");
+  const [editReviewRating, setEditReviewRating] = useState(0);
 
   useEffect(() => {
     dispatch(getBook({ id: bookId }));
   }, [dispatch, bookId]);
 
-  const handleAddReview = (comment) => {
-    dispatch(addReview({ bookId, comment }));
+  const handleAddReview = (comment, rating) => {
+    dispatch(addReview({ bookId, comment, rating }));
   };
 
   const handleDeleteReview = (reviewId) => {
-    dispatch(deleteReview({ bookId, reviewId }));
+    dispatch(deleteReview({ bookId, reviewId }))
+      .then(() => {
+        dispatch(getBook({ id: bookId }));
+      })
+      .catch((error) => {
+        console.error("Error deleting review:", error);
+      });
   };
 
-  const handleEditReview = (reviewId, comment) => {
-    dispatch(editReview({ bookId, reviewId, comment }));
+  const handleEditReview = (reviewId, comment, rating) => {
     setEditingReviewId(null);
-    setEditReviewText("");
+    const reviewToEdit = reviews.find((review) => review._id === reviewId);
+    if (reviewToEdit) {
+      dispatch(editReview({ bookId, reviewId, comment, rating }))
+        .then(() => {
+          dispatch(getBook({ id: bookId }));
+        })
+        .catch((error) => {
+          console.error("Error editing review:", error);
+        });
+    } else {
+      console.error("Review not found");
+    }
   };
+
+  useEffect(() => {
+    if (editingReviewId !== null) {
+      const reviewToEdit = reviews.find(
+        (review) => review._id === editingReviewId
+      );
+      if (reviewToEdit) {
+        setEditReviewText(reviewToEdit.comment);
+        setEditReviewRating(reviewToEdit.rating);
+      }
+    }
+  }, [editingReviewId, reviews]);
 
   if (!book) {
     return <p>Book not found</p>;
@@ -47,107 +75,116 @@ const BookDetails = () => {
       <div className="max-w-2xl mx-auto">
         <h2 className="text-3xl font-bold mb-4">{book.title}</h2>
         <div className="mb-4">
-          <label
-            className="block text-gray-700 font-bold mb-2"
-            htmlFor="author"
-          >
+          <label className="text-gray-700 font-bold mb-2" htmlFor="author">
             Author:
           </label>
           <p className="text-gray-600">{book.author}</p>
         </div>
         <div className="mb-4">
-          <label
-            className="block text-gray-700 font-bold mb-2"
-            htmlFor="description"
-          >
+          <label className="text-gray-700 font-bold mb-2" htmlFor="description">
             Description:
           </label>
           <p className="text-gray-600">{book.description}</p>
         </div>
         <div className="mb-4">
-          <label
-            className="block text-gray-700 font-bold mb-2"
-            htmlFor="coverImage"
-          >
+          <label className="text-gray-700 font-bold mb-2" htmlFor="coverImage">
             Cover Image:
           </label>
           <img
+            className="w-40 h-56 object-cover"
             src={book.coverImage}
-            alt=""
-            className="w-36 h-24 object-cover"
+            alt={book.title}
           />
         </div>
-        <div className="mb-4">
-          <h3 className="text-2xl font-bold mb-2">Reviews</h3>
-          {book.reviews.length === 0 ? (
-            <p>No reviews available</p>
-          ) : (
-            <ul>
-              {book.reviews.map((review) => (
-                <li key={review._id} className="mb-4">
-                  {editingReviewId === review._id ? (
-                    <div className="flex items-center">
-                      <input
-                        type="text"
-                        value={editReviewText}
-                        onChange={(e) => setEditReviewText(e.target.value)}
-                        className="border border-gray-300 p-2 rounded-lg w-full mr-2"
-                      />
-                      <button
-                        onClick={() =>
-                          handleEditReview(review._id, editReviewText)
-                        }
-                        className="text-white bg-blue-500 py-2 px-4 rounded-lg"
-                      >
-                        Save
-                      </button>
-                    </div>
-                  ) : (
-                    <>
-                      <p className="text-gray-600">{review.comment}</p>
-                      {isUser && (
-                        <div className="flex items-center mt-2">
-                          {isUser._id === review.user && (
-                            <>
-                              <button
-                                onClick={() => setEditingReviewId(review._id)}
-                                className="text-blue-500 font-bold mr-2"
-                              >
-                                Edit
-                              </button>
-                              <button
-                                onClick={() => handleDeleteReview(review._id)}
-                                className="text-red-500 font-bold"
-                              >
-                                Delete
-                              </button>
-                            </>
-                          )}
-                        </div>
-                      )}
-                    </>
-                  )}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-        {isUser ? (
-          <ReviewForm bookId={book._id} handleAddReview={handleAddReview} />
-        ) : (
-          <p>
-            To add a review, you need to{" "}
-            <span>
-              <Link
-                to="/login"
-                title=""
-                class="font-medium text-black transition-all duration-200 hover:underline"
-              >
-                Log In
-              </Link>
-            </span>
-          </p>
+        {isUser && (
+          <div className="mb-4">
+            <ReviewForm bookId={book._id} onSubmit={handleAddReview} />
+          </div>
         )}
+        <h3 className="text-xl font-bold mb-2">Reviews:</h3>
+        {reviews.length > 0 ? (
+          <ul>
+            {reviews.map((review) => (
+              <li key={review._id} className="mb-2">
+                <p className="text-gray-600">{review.comment}</p>
+                {isUser && (
+                  <div className="flex items-center mt-1">
+                    {editingReviewId === review._id ? (
+                      <>
+                        <input
+                          className="border rounded-l px-2 py-1 mr-1"
+                          type="text"
+                          value={editReviewText}
+                          onChange={(e) => setEditReviewText(e.target.value)}
+                        />
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <button
+                            key={star}
+                            type="button"
+                            onClick={() => setEditReviewRating(star)}
+                            className={`text-2xl ${
+                              star <= editReviewRating
+                                ? "text-yellow-500"
+                                : "text-gray-400"
+                            }`}
+                          >
+                            ★
+                          </button>
+                        ))}
+                        <button
+                          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded-r"
+                          onClick={() =>
+                            handleEditReview(
+                              review._id,
+                              editReviewText,
+                              editReviewRating
+                            )
+                          }
+                        >
+                          Save
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded-l"
+                          onClick={() => setEditingReviewId(review._id)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded-r"
+                          onClick={() => handleDeleteReview(review._id)}
+                        >
+                          Delete
+                        </button>
+                      </>
+                    )}
+                  </div>
+                )}
+                <div className="mt-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <span
+                      key={star}
+                      className={`${
+                        star <= review.rating
+                          ? "text-yellow-500"
+                          : "text-gray-400"
+                      }`}
+                    >
+                      ★
+                    </span>
+                  ))}
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No reviews yet.</p>
+        )}
+        <Link to="/books" className="text-blue-500 mt-4 block">
+          Back to Books
+        </Link>
       </div>
     </div>
   );

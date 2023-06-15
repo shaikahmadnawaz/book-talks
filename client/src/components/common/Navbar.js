@@ -8,7 +8,7 @@ import { BsFillJournalBookmarkFill } from "react-icons/bs";
 const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const isLoggedIn = useSelector((state) => state.auth.user);
 
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 

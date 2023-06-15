@@ -82,11 +82,12 @@ export const fetchUserBooks = createAsyncThunk(
 
 export const addReview = createAsyncThunk(
   "books/addReview",
-  async ({ bookId, comment }, { rejectWithValue }) => {
+  async ({ bookId, comment, rating }, { rejectWithValue }) => {
     try {
+      console.log(bookId, comment, rating);
       const response = await axios.post(
         `http://localhost:5000/api/books/${bookId}/reviews`,
-        { comment },
+        { comment, rating },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -128,11 +129,11 @@ export const deleteReview = createAsyncThunk(
 
 export const editReview = createAsyncThunk(
   "books/editReview",
-  async ({ bookId, reviewId, comment }, { rejectWithValue }) => {
+  async ({ bookId, reviewId, comment, rating }, { rejectWithValue }) => {
     try {
       const response = await axios.patch(
         `http://localhost:5000/api/books/${bookId}/reviews/${reviewId}`,
-        { comment },
+        { comment, rating },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -253,14 +254,20 @@ const bookSlice = createSlice({
       })
       .addCase(editReview.fulfilled, (state, action) => {
         state.loading = false;
-        // Finding the edited review and update its comment
-        state.book.reviews = state.book.reviews.map((review) => {
-          if (review._id === action.payload.review._id) {
-            return { ...review, comment: action.payload.review.comment };
-          }
-          return review;
-        });
+        const editedReview = action.payload?.review;
+        if (editedReview) {
+          // Finding the edited review and update its comment
+          state.book.reviews = state.book.reviews.map((review) => {
+            if (review._id === editedReview._id) {
+              return { ...review, comment: editedReview.comment };
+            }
+            return review;
+          });
+        } else {
+          console.error("Edited review not found");
+        }
       })
+
       .addCase(editReview.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
