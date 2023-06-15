@@ -111,6 +111,7 @@ const BookDetails = () => {
         {isUser && (
           <div className="mb-4">
             <ReviewForm
+              bookId={book._id}
               onSubmit={handleAddReview}
               rating={rating}
               onRatingChange={handleRatingChange}

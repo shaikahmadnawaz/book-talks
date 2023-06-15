@@ -84,6 +84,7 @@ export const addReview = createAsyncThunk(
   "books/addReview",
   async ({ bookId, comment }, { rejectWithValue }) => {
     try {
+      console.log(bookId, comment);
       const response = await axios.post(
         `http://localhost:5000/api/books/${bookId}/reviews`,
         { comment },
