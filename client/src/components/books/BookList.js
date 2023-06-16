@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { fetchBooks } from "../../redux/bookSlice";
 import { Link } from "react-router-dom";
 import { MdOutlineRateReview } from "react-icons/md";
+import { Rings } from "react-loader-spinner";
 
 const BookList = () => {
   const dispatch = useDispatch();
@@ -16,7 +17,20 @@ const BookList = () => {
   }, [dispatch]);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Rings
+          height="80"
+          width="80"
+          color="#21BF73"
+          radius="6"
+          wrapperStyle={{}}
+          wrapperClass=""
+          visible={true}
+          ariaLabel="rings-loading"
+        />
+      </div>
+    );
   }
 
   if (error) {

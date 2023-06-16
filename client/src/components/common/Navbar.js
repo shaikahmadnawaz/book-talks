@@ -18,7 +18,6 @@ const Navbar = () => {
 
   const handleLogout = () => {
     dispatch(logoutUser());
-    window.location.reload();
     navigate("/", { replace: true });
   };
 

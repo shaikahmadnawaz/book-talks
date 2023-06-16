@@ -4,6 +4,7 @@ import { loginUser } from "../../redux/authSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { BsFillJournalBookmarkFill } from "react-icons/bs";
 import { ArrowRight } from "lucide-react";
+import { Rings } from "react-loader-spinner";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
@@ -36,6 +37,23 @@ const LoginPage = () => {
       navigate("/", { replace: true });
     }
   }, [user, navigate]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Rings
+          height="80"
+          width="80"
+          color="#21BF73"
+          radius="6"
+          wrapperStyle={{}}
+          wrapperClass=""
+          visible={true}
+          ariaLabel="rings-loading"
+        />
+      </div>
+    );
+  }
 
   return (
     <section>
