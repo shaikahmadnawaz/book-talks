@@ -4,9 +4,12 @@ import { fetchBooks } from "../../redux/bookSlice";
 import { Link } from "react-router-dom";
 import { MdOutlineRateReview } from "react-icons/md";
 import { Rings } from "react-loader-spinner";
+import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const BookList = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const books = useSelector((state) => state.books.books);
   const loading = useSelector((state) => state.books.loading);
   const error = useSelector((state) => state.books.error);
@@ -15,6 +18,13 @@ const BookList = () => {
   useEffect(() => {
     dispatch(fetchBooks());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(`Error: ${error.message}`);
+      navigate("/");
+    }
+  }, [error, navigate]);
 
   if (loading) {
     return (

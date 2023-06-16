@@ -9,11 +9,14 @@ import {
 } from "../../redux/bookSlice";
 import ReviewForm from "../reviews/ReviewForm";
 import { Link } from "react-router-dom";
+import { Rings } from "react-loader-spinner";
 
 const BookDetails = () => {
   const dispatch = useDispatch();
   const { bookId } = useParams();
   const book = useSelector((store) => store.books.book);
+  const loading = useSelector((state) => state.books.loading);
+  const error = useSelector((state) => state.books.error);
   const reviews = useSelector((store) => store.books.book.reviews);
   const isUser = useSelector((store) => store.auth.user);
   const [editingReviewId, setEditingReviewId] = useState(null);
@@ -65,6 +68,23 @@ const BookDetails = () => {
       }
     }
   }, [editingReviewId, reviews]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Rings
+          height="80"
+          width="80"
+          color="#21BF73"
+          radius="6"
+          wrapperStyle={{}}
+          wrapperClass=""
+          visible={true}
+          ariaLabel="rings-loading"
+        />
+      </div>
+    );
+  }
 
   if (!book) {
     return <p>Book not found</p>;

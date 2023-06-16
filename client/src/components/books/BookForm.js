@@ -1,9 +1,14 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchBooks, addBook } from "../../redux/bookSlice";
+import { Rings } from "react-loader-spinner";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 const BookForm = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const loading = useSelector((state) => state.books.loading);
 
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
@@ -13,9 +18,10 @@ const BookForm = () => {
 
   const handleFileChange = (e) => {
     setCoverImage(e.target.files[0]);
+    toast.success("Cover image uploaded successfully");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const formData = new FormData();
@@ -29,11 +35,29 @@ const BookForm = () => {
       .unwrap()
       .then(() => {
         dispatch(fetchBooks());
+        navigate("/", { replace: true });
       })
       .catch((error) => {
         console.error("Error:", error);
       });
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Rings
+          height="80"
+          width="80"
+          color="#21BF73"
+          radius="6"
+          wrapperStyle={{}}
+          wrapperClass=""
+          visible={true}
+          ariaLabel="rings-loading"
+        />
+      </div>
+    );
+  }
 
   return (
     <section className="bg-white">

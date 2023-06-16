@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getAllBooks } from "../services/book";
 import axios from "axios";
 import { BASE_URL } from "../config/url";
+import { toast } from "react-hot-toast";
 
 // Async thunk action to fetch all books
 export const fetchBooks = createAsyncThunk("books/fetchBooks", async () => {
@@ -189,9 +190,11 @@ const bookSlice = createSlice({
       .addCase(addBook.fulfilled, (state, { payload }) => {
         state.loading = false;
         state.book = payload.book;
+        toast.success("Book added successfully");
       })
       .addCase(addBook.rejected, (state, { payload }) => {
         state.loading = false;
+        toast.error(payload.message);
       });
 
     // Adding the addReview case to the extraReducers
@@ -203,6 +206,7 @@ const bookSlice = createSlice({
         state.loading = false;
         // Updating the book's reviews with the new review
         state.book.reviews.push(action.payload.review);
+        toast.success("Review added successfully");
       })
       .addCase(addReview.rejected, (state, action) => {
         state.loading = false;
@@ -258,7 +262,6 @@ const bookSlice = createSlice({
           console.error("Edited review not found");
         }
       })
-
       .addCase(editReview.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
