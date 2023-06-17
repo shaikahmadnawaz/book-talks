@@ -31,15 +31,13 @@ const BookForm = () => {
     formData.append("coverImage", coverImage);
     formData.append("category", category);
 
-    dispatch(addBook(formData))
-      .unwrap()
-      .then(() => {
-        dispatch(fetchBooks());
-        navigate("/", { replace: true });
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+    try {
+      await dispatch(addBook(formData));
+      dispatch(fetchBooks());
+      navigate("/", { replace: true });
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   if (loading) {
