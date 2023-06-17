@@ -4,6 +4,7 @@ import { signupUser } from "../../redux/authSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { BsFillJournalBookmarkFill } from "react-icons/bs";
 import { ArrowRight } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 const SignupPage = () => {
   const navigate = useNavigate();
@@ -14,12 +15,18 @@ const SignupPage = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [profileImage, setProfileImage] = useState(null);
+
+  const handleFileChange = (e) => {
+    setProfileImage(e.target.files[0]);
+    toast.success("Cover image uploaded successfully");
+  };
 
   const handleSignup = async (e) => {
     e.preventDefault();
 
     // Dispatching the signupUser async thunk action
-    await dispatch(signupUser({ name, email, password }));
+    await dispatch(signupUser({ name, email, password, profileImage }));
 
     // Clearing the input fields
     setName("");
@@ -109,6 +116,22 @@ const SignupPage = () => {
                     onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
+              </div>
+              <div>
+                <label
+                  htmlFor="profileImage"
+                  className="block mb-2 text-sm font-medium text-black"
+                >
+                  Profile Image
+                </label>
+                <input
+                  type="file"
+                  name="profileImage"
+                  id="profileImage"
+                  accept="image/*"
+                  className="bg-white border border-black text-black text-sm rounded-lg focus:outline-none focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                  onChange={handleFileChange}
+                />
               </div>
               <div>
                 <button

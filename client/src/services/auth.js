@@ -16,12 +16,13 @@ export const login = async (email, password) => {
 };
 
 // Function to make signup API request
-export const signup = async (name, email, password) => {
+export const signup = async (name, email, password, profileImage) => {
   try {
     const response = await axios.post(`${BASE_URL}/api/auth/signup`, {
       name,
       email,
       password,
+      profileImage,
     });
     return response.data;
   } catch (error) {

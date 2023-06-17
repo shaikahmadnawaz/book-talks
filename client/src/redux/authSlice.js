@@ -31,9 +31,9 @@ export const loginUser = createAsyncThunk(
 // Async thunk action to handle user signup
 export const signupUser = createAsyncThunk(
   "auth/signup",
-  async ({ name, email, password }) => {
+  async ({ name, email, password, profileImage }) => {
     try {
-      const response = await signup(name, email, password);
+      const response = await signup(name, email, password, profileImage);
       // Save the token to local storage
       localStorage.setItem("token", response.token);
       return response;
@@ -84,6 +84,7 @@ const authSlice = createSlice({
       })
       .addCase(signupUser.fulfilled, (state, action) => {
         state.loading = false;
+        console.log(action.payload);
         toast.success("Signup successful!");
       })
       .addCase(signupUser.rejected, (state, action) => {

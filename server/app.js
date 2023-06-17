@@ -22,7 +22,7 @@ const upload = multer({
 });
 
 // Routes for user authentication
-app.use("/api/auth", authRouter);
+app.use("/api/auth", upload.single("profileImage"), authRouter);
 
 app.use("/api/books", upload.single("coverImage"), bookRoutes);
 
