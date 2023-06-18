@@ -25,18 +25,36 @@ const SignupPage = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("email", email);
-    formData.append("password", password);
-    if (profileImage) {
-      formData.append("profileImage", profileImage);
-    }
+    const userData = {
+      name,
+      email,
+      password,
+      profileImage,
+    };
 
-    console.log(formData);
+    console.log(userData);
 
     // Dispatching the signupUser async thunk action
-    await dispatch(signupUser(formData));
+    await dispatch(signupUser(userData));
+
+    // Clearing the input fields
+    setName("");
+    setEmail("");
+    setPassword("");
+    setProfileImage(null);
+
+    // const formData = new FormData();
+    // formData.append("name", name);
+    // formData.append("email", email);
+    // formData.append("password", password);
+    // if (profileImage) {
+    //   formData.append("profileImage", profileImage);
+    // }
+
+    // console.log(formData);
+
+    // Dispatching the signupUser async thunk action
+    // await dispatch(signupUser(formData));
 
     // Clearing the input fields
     // setName("");
