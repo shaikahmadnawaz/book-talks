@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { login, signup } from "../services/auth";
 import { toast } from "react-hot-toast";
+import axios from "axios";
+import { BASE_URL } from "../config/url";
 
 const user = localStorage.getItem("user");
 const token = localStorage.getItem("token");
@@ -31,14 +33,18 @@ export const loginUser = createAsyncThunk(
 // Async thunk action to handle user signup
 export const signupUser = createAsyncThunk(
   "auth/signup",
-  async ({ name, email, password }) => {
+  async (payload, { rejectWithValue }) => {
     try {
-      const response = await signup(name, email, password);
+      console.log("Payload in frontend : ", payload);
+      const response = await axios.post(`${BASE_URL}/api/auth/signup`, payload);
       // Save the token to local storage
-      localStorage.setItem("token", response.token);
-      return response;
+      localStorage.setItem("token", response.data.token);
+      return response.data;
     } catch (error) {
-      throw new Error(error.message);
+      if (!error?.response) {
+        throw error;
+      }
+      return rejectWithValue(error?.response?.data);
     }
   }
 );
@@ -77,25 +83,29 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
         toast.error("Login failed!");
-      })
+      });
+
+    builder
       .addCase(signupUser.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(signupUser.fulfilled, (state, action) => {
         state.loading = false;
+        console.log(action.payload);
         toast.success("Signup successful!");
       })
       .addCase(signupUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
         toast.error("Signup failed!");
-      })
-      .addCase(logoutUser.fulfilled, (state) => {
-        state.user = null;
-        state.token = null;
-        toast.success("Logout successful!");
       });
+
+    builder.addCase(logoutUser.fulfilled, (state) => {
+      state.user = null;
+      state.token = null;
+      toast.success("Logout successful!");
+    });
   },
 });
 

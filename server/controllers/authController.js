@@ -1,17 +1,20 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import { uploadImage } from "../middlewares/uploadMiddleware.js";
 
 // User registration
 export const signup = async (req, res) => {
   try {
     const { name, email, password } = req.body;
+    console.log("He;", req.body);
+    console.log(req.file);
 
-    if (!name || !email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Please fill all required fields" });
-    }
+    // if (!name || !email || !password) {
+    //   return res
+    //     .status(400)
+    //     .json({ message: "Please fill all required fields" });
+    // }
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -29,10 +32,20 @@ export const signup = async (req, res) => {
       password: hashedPassword,
     });
 
-    // Save the user to the database
-    await newUser.save();
+    if (req.file) {
+      // Upload the profile image to AWS S3
+      await uploadImage(req.file, "profile-images", newUser._id);
 
-    res.status(201).json({ message: "User registered successfully" });
+      // Set the cover image URL in the book model
+      newUser.profileImage = `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${req.file.originalname}`;
+    }
+
+    // Save the user to the database
+    const newProfile = await newUser.save();
+
+    res
+      .status(201)
+      .json({ message: "User registered successfully", newProfile });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });

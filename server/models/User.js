@@ -21,6 +21,9 @@ const UserSchema = new mongoose.Schema(
       required: [true, "Password is required"],
       minlength: 5,
     },
+    profileImage: {
+      type: String,
+    },
   },
   {
     toJSON: {

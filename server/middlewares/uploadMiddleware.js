@@ -12,8 +12,8 @@ const s3Client = new S3Client({
   },
 });
 
-export const uploadCoverImage = async (file, id) => {
-  console.log(file, id);
+export const uploadImage = async (file, folderName, id) => {
+  console.log(file, folderName, id);
   try {
     // Determine the content type based on the file extension
     const contentType = `image/${extname(file.originalname).substring(1)}`;
@@ -21,7 +21,7 @@ export const uploadCoverImage = async (file, id) => {
     // Set the parameters
     const command = new PutObjectCommand({
       Bucket: process.env.AWS_BUCKET_NAME,
-      Key: file.originalname, // File name you want to save as in S3
+      Key: `${folderName}/${id}/${file.originalname}`, // Path to the specified folder with user id and file name
       Body: file.buffer,
       ContentType: contentType,
     });
