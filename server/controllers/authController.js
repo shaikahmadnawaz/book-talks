@@ -7,6 +7,8 @@ import { uploadImage } from "../middlewares/uploadMiddleware.js";
 export const signup = async (req, res) => {
   try {
     const { name, email, password } = req.body;
+    console.log("He;", req.body);
+    console.log(req.file);
 
     // if (!name || !email || !password) {
     //   return res

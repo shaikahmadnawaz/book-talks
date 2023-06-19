@@ -35,9 +35,8 @@ export const signupUser = createAsyncThunk(
   "auth/signup",
   async (payload, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${BASE_URL}/api/auth/signup`, {
-        payload,
-      });
+      console.log("Payload in frontend : ", payload);
+      const response = await axios.post(`${BASE_URL}/api/auth/signup`, payload);
       // Save the token to local storage
       localStorage.setItem("token", response.data.token);
       return response.data;
