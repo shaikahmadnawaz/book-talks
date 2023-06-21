@@ -137,9 +137,7 @@ const BookDetails = () => {
               <li key={review._id} className="mb-4">
                 <div className="flex items-center">
                   <img
-                    src={
-                      isUser ? isUser.profileImage : review.user.profileImage
-                    }
+                    src={review.user.profileImage}
                     alt="Reviewer"
                     className="w-8 h-8 rounded-full mr-2"
                   />

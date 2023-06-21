@@ -22,21 +22,21 @@ const ReviewSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-  },
-  {
-    toJSON: {
-      virtuals: true,
-    },
-    toObject: {
-      virtuals: true,
-    },
   }
+  // {
+  //   toJSON: {
+  //     virtuals: true,
+  //   },
+  //   toObject: {
+  //     virtuals: true,
+  //   },
+  // }
 );
 
-ReviewSchema.virtual("reviewer", {
-  ref: "User",
-  localField: "user",
-  foreignField: "_id",
-});
+// ReviewSchema.virtual("reviewer", {
+//   ref: "User",
+//   localField: "user",
+//   foreignField: "_id",
+// });
 
 export default mongoose.model("Review", ReviewSchema);

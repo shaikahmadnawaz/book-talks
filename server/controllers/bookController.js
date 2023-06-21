@@ -154,7 +154,10 @@ export const getReviews = asyncHandler(async (req, res) => {
       return res.status(400).json({ message: "Book ID not received!" });
     }
 
-    const book = await Book.findById(bookId);
+    const book = await Book.findById(bookId).populate([
+      "reviews",
+      { path: "user", select: "profileImage" },
+    ]);
     if (!book) {
       return res.status(404).json({ message: "Book Not Found!" });
     }
