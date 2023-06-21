@@ -10,10 +10,8 @@ const ReviewForm = ({ bookId }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Dispatch the addReview action with the review data
     dispatch(addReview({ bookId, comment, rating }));
 
-    // Clear the comment and rating fields after submission
     setComment("");
     setRating(0);
   };
@@ -26,7 +24,7 @@ const ReviewForm = ({ bookId }) => {
         </label>
         <textarea
           id="comment"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-primary"
           rows="4"
           value={comment}
           onChange={(e) => setComment(e.target.value)}
@@ -52,7 +50,7 @@ const ReviewForm = ({ bookId }) => {
       </div>
       <button
         type="submit"
-        className="bg-primary text-white font-bold py-2 px-4 rounded"
+        className="bg-primary text-white font-bold py-2 px-4 rounded hover:bg-primary-dark"
       >
         Submit Review
       </button>
