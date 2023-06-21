@@ -30,6 +30,9 @@ const UserBooks = () => {
           <p className="text-gray-600">{book.description}</p>
         </div>
       ))}
+      {userBooks.length === 0 && (
+        <p className="text-center text-gray-600">No books found.</p>
+      )}
     </div>
   );
 };

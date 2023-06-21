@@ -27,7 +27,10 @@ export const getBooks = asyncHandler(async (req, res) => {
 // @access  Public
 export const getBookById = asyncHandler(async (req, res) => {
   try {
-    const book = await Book.findById(req.params.id).populate("reviews");
+    const book = await Book.findById(req.params.id).populate([
+      { path: "reviews", populate: { path: "user" } },
+    ]);
+
     if (book) {
       let count = book.viewCount;
       count = count + 1;
@@ -154,10 +157,7 @@ export const getReviews = asyncHandler(async (req, res) => {
       return res.status(400).json({ message: "Book ID not received!" });
     }
 
-    const book = await Book.findById(bookId).populate([
-      "reviews",
-      { path: "user", select: "profileImage" },
-    ]);
+    const book = await Book.findById(bookId);
     if (!book) {
       return res.status(404).json({ message: "Book Not Found!" });
     }

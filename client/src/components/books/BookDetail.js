@@ -16,7 +16,6 @@ const BookDetails = () => {
   const { bookId } = useParams();
   const book = useSelector((store) => store.books.book);
   const loading = useSelector((state) => state.books.loading);
-  const error = useSelector((state) => state.books.error);
   const reviews = useSelector((store) => store.books.book.reviews);
   console.log("reviews", reviews);
   const isUser = useSelector((store) => store.auth.user);
@@ -141,7 +140,10 @@ const BookDetails = () => {
                     alt="Reviewer"
                     className="w-8 h-8 rounded-full mr-2"
                   />
-                  <p className="text-gray-600">{review.comment}</p>
+                  <p className="text-gray-600">
+                    <span className="font-bold">{review.user.name}: </span>
+                    {review.comment}
+                  </p>
                 </div>
                 {isUser && isUser._id === review.user && (
                   <div className="flex items-center mt-1">
