@@ -81,7 +81,7 @@ export const addBook = asyncHandler(async (req, res) => {
       await uploadImage(req.file, "cover-images", book._id);
 
       // Set the cover image URL in the book model
-      book.coverImage = `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${req.file.originalname}`;
+      book.coverImage = `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/cover-images/${book._id}/${req.file.originalname}`;
     }
 
     const createdBook = await book.save();

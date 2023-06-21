@@ -10,22 +10,22 @@ export const signup = async (req, res) => {
     console.log("He;", req.body);
     console.log(req.file);
 
-    // if (!name || !email || !password) {
-    //   return res
-    //     .status(400)
-    //     .json({ message: "Please fill all required fields" });
-    // }
+    if (!name || !email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Please fill all required fields" });
+    }
 
-    // Check if user already exists
+    // Checking if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // Hash the password
+    // Hashing the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new user
+    // Creating a new user
     const newUser = new User({
       name,
       email,
@@ -33,11 +33,11 @@ export const signup = async (req, res) => {
     });
 
     if (req.file) {
-      // Upload the profile image to AWS S3
+      // Uploading the profile image to AWS S3
       await uploadImage(req.file, "profile-images", newUser._id);
 
-      // Set the cover image URL in the book model
-      newUser.profileImage = `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${req.file.originalname}`;
+      // Setting the cover image URL in the book model
+      newUser.profileImage = `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/profile-images/${newUser._id}/${req.file.originalname}`;
     }
 
     // Save the user to the database
@@ -63,20 +63,20 @@ export const login = async (req, res) => {
         .json({ message: "Please fill all required fields" });
     }
 
-    // Check if user exists
+    // Checking if user exists
     const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Compare passwords
+    // Comparing passwords
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    // Generate a JWT
+    // Generating a JWT
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
       expiresIn: "24h", // Token expiration time
     });
