@@ -16,8 +16,8 @@ const BookDetails = () => {
   const { bookId } = useParams();
   const book = useSelector((store) => store.books.book);
   const loading = useSelector((state) => state.books.loading);
-  const error = useSelector((state) => state.books.error);
   const reviews = useSelector((store) => store.books.book.reviews);
+  console.log("reviews", reviews);
   const isUser = useSelector((store) => store.auth.user);
   const [editingReviewId, setEditingReviewId] = useState(null);
   const [editReviewText, setEditReviewText] = useState("");
@@ -116,17 +116,35 @@ const BookDetails = () => {
             alt={book.title}
           />
         </div>
-        {isUser && (
+        {isUser ? (
           <div className="mb-4">
             <ReviewForm bookId={book._id} onSubmit={handleAddReview} />
           </div>
+        ) : (
+          <p className="text-gray-600">
+            Please{" "}
+            <Link to="/login" className="text-blue-500">
+              login
+            </Link>{" "}
+            to add a review.
+          </p>
         )}
         <h3 className="text-xl font-bold mb-2">Reviews:</h3>
         {reviews.length > 0 ? (
           <ul>
             {reviews.map((review) => (
-              <li key={review._id} className="mb-2">
-                <p className="text-gray-600">{review.comment}</p>
+              <li key={review._id} className="mb-4">
+                <div className="flex items-center">
+                  <img
+                    src={review.user.profileImage}
+                    alt="Reviewer"
+                    className="w-8 h-8 rounded-full mr-2"
+                  />
+                  <p className="text-gray-600">
+                    <span className="font-bold">{review.user.name}: </span>
+                    {review.comment}
+                  </p>
+                </div>
                 {isUser && isUser._id === review.user && (
                   <div className="flex items-center mt-1">
                     {editingReviewId === review._id ? (

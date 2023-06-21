@@ -27,7 +27,10 @@ export const getBooks = asyncHandler(async (req, res) => {
 // @access  Public
 export const getBookById = asyncHandler(async (req, res) => {
   try {
-    const book = await Book.findById(req.params.id).populate("reviews");
+    const book = await Book.findById(req.params.id).populate([
+      { path: "reviews", populate: { path: "user" } },
+    ]);
+
     if (book) {
       let count = book.viewCount;
       count = count + 1;
@@ -81,7 +84,7 @@ export const addBook = asyncHandler(async (req, res) => {
       await uploadImage(req.file, "cover-images", book._id);
 
       // Set the cover image URL in the book model
-      book.coverImage = `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${req.file.originalname}`;
+      book.coverImage = `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/cover-images/${book._id}/${req.file.originalname}`;
     }
 
     const createdBook = await book.save();

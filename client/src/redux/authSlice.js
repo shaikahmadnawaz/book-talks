@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { login, signup } from "../services/auth";
+import { login } from "../services/auth";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import { BASE_URL } from "../config/url";
