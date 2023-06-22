@@ -123,7 +123,7 @@ const BookDetails = () => {
         ) : (
           <p className="text-gray-600">
             Please{" "}
-            <Link to="/login" className="text-blue-500">
+            <Link to="/login" className="text-primary">
               login
             </Link>{" "}
             to add a review.
@@ -220,7 +220,7 @@ const BookDetails = () => {
         ) : (
           <p>No reviews yet.</p>
         )}
-        <Link to="/" className="text-blue-500 mt-4 block">
+        <Link to="/" className="text-primary mt-4 block">
           Back to Books
         </Link>
       </div>

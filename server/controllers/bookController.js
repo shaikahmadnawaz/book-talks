@@ -9,7 +9,15 @@ import { uploadImage } from "../middlewares/uploadMiddleware.js";
 // @access  Public
 export const getBooks = asyncHandler(async (req, res) => {
   try {
-    const books = await Book.find({}).populate("reviews");
+    const books = await Book.find({})
+      .populate({
+        path: "reviews",
+        populate: {
+          path: "user",
+          select: "name profileImage",
+        },
+      })
+      .populate("user", "name profileImage");
     if (books.length > 0) {
       res
         .status(200)

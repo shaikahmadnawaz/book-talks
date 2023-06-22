@@ -129,6 +129,25 @@ const BookList = () => {
                     </span>
                   </div>
                 </div>
+                <div className="flex items-center mt-4">
+                  <img
+                    className="w-8 h-8 rounded-full mr-2"
+                    src={book.user.profileImage}
+                    alt="user"
+                  />
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">
+                      {book.user.name}
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      {new Date(book.createdAt).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           ))}
