@@ -33,7 +33,7 @@ const userSlice = createSlice({
     loading: false,
     error: null,
     selectedUser: {},
-    user: null,
+    user: {},
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -59,7 +59,7 @@ const userSlice = createSlice({
       .addCase(fetchUserById.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
-        state.user = action.payload.user;
+        state.selectedUser = action.payload;
       })
       .addCase(fetchUserById.rejected, (state, action) => {
         state.loading = false;

@@ -8,14 +8,21 @@ const BookUser = () => {
   const dispatch = useDispatch();
   const { userId } = useParams();
   const user = useSelector((state) => state.users.selectedUser);
+
   console.log(user);
 
   useEffect(() => {
     dispatch(fetchUserById(userId));
   }, [dispatch, userId]);
 
+  if (!user) {
+    return <p>Loading user profile...</p>;
+  }
+
   return (
-    <div>{user ? <User user={user} /> : <p>Loading user profile...</p>}</div>
+    <div>
+      <User user={user} />
+    </div>
   );
 };
 

@@ -25,7 +25,7 @@ export const getUsers = asyncHandler(async (req, res) => {
 // @access  Public
 export const getUserById = asyncHandler(async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.params.id).populate("books");
 
     if (user) {
       res.status(200).json({ message: "User found", user });
