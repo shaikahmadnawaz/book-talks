@@ -1,19 +1,21 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchBooks } from "../../redux/bookSlice";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MdOutlineRateReview } from "react-icons/md";
 import { Rings } from "react-loader-spinner";
 import { toast } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
 
 const BookList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const books = useSelector((state) => state.books.books);
+  console.log(books);
   const loading = useSelector((state) => state.books.loading);
   const error = useSelector((state) => state.books.error);
   const isAuthenticated = useSelector((state) => state.auth.user);
+
+  const [selectedUserId, setSelectedUserId] = useState(null);
 
   useEffect(() => {
     dispatch(fetchBooks());
@@ -44,6 +46,10 @@ const BookList = () => {
   if (error) {
     return <p className="text-red-500">Error: {error.message}</p>;
   }
+
+  const handleUserClick = (userId) => {
+    setSelectedUserId(userId);
+  };
 
   return (
     <div className="p-8">
@@ -130,15 +136,21 @@ const BookList = () => {
                   </div>
                 </div>
                 <div className="flex items-center mt-4">
-                  <img
-                    className="w-8 h-8 rounded-full mr-2"
-                    src={book.user.profileImage}
-                    alt="user"
-                  />
+                  <Link to={`/profile/${book.user.id}`}>
+                    <img
+                      className="w-8 h-8 rounded-full mr-2 cursor-pointer"
+                      src={book.user.profileImage}
+                      alt="user"
+                    />
+                  </Link>
                   <div>
-                    <p className="text-sm font-medium text-gray-600">
+                    <Link
+                      to={`/profile/${book.user.id}`}
+                      className="text-sm font-medium text-gray-600 cursor-pointer"
+                      onClick={() => handleUserClick(book.user.id)}
+                    >
                       {book.user.name}
-                    </p>
+                    </Link>
                     <p className="text-xs text-gray-400">
                       {new Date(book.createdAt).toLocaleDateString("en-US", {
                         month: "short",

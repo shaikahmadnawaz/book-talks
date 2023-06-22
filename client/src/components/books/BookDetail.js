@@ -10,11 +10,13 @@ import {
 import ReviewForm from "../reviews/ReviewForm";
 import { Link } from "react-router-dom";
 import { Rings } from "react-loader-spinner";
+import { formatDistanceToNow } from "date-fns";
 
 const BookDetails = () => {
   const dispatch = useDispatch();
   const { bookId } = useParams();
   const book = useSelector((store) => store.books.book);
+  console.log(book);
   const loading = useSelector((state) => state.books.loading);
   const reviews = useSelector((store) => store.books.book.reviews);
   console.log("reviews", reviews);
@@ -28,7 +30,15 @@ const BookDetails = () => {
   }, [dispatch, bookId]);
 
   const handleAddReview = (comment, rating) => {
-    dispatch(addReview({ bookId, comment, rating }));
+    dispatch(addReview({ bookId, comment, rating }))
+      .then(() => {
+        dispatch(getBook({ id: bookId })).catch((error) => {
+          console.error("Error fetching book:", error);
+        });
+      })
+      .catch((error) => {
+        console.error("Error adding review:", error);
+      });
   };
 
   const handleDeleteReview = (reviewId) => {
@@ -116,6 +126,18 @@ const BookDetails = () => {
             alt={book.title}
           />
         </div>
+        <div className="mb-4">
+          <label className="text-gray-700 font-bold mb-2" htmlFor="createdDate">
+            Created Date:
+          </label>
+          <p className="text-gray-600">
+            {new Date(book.createdAt).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })}
+          </p>
+        </div>
         {isUser ? (
           <div className="mb-4">
             <ReviewForm bookId={book._id} onSubmit={handleAddReview} />
@@ -140,10 +162,17 @@ const BookDetails = () => {
                     alt="Reviewer"
                     className="w-8 h-8 rounded-full mr-2"
                   />
-                  <p className="text-gray-600">
-                    <span className="font-bold">{review.user.name}: </span>
-                    {review.comment}
-                  </p>
+                  <div>
+                    <p className="text-gray-600">
+                      <span className="font-bold">{review.user.name}: </span>
+                      {review.comment}
+                    </p>
+                    <p className="text-gray-500 text-sm">
+                      {formatDistanceToNow(new Date(review.date), {
+                        addSuffix: true,
+                      })}
+                    </p>
+                  </div>
                 </div>
                 {isUser && isUser._id === review.user && (
                   <div className="flex items-center mt-1">
