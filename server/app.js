@@ -6,6 +6,7 @@ import connectDB from "./db/connectDB.js";
 import authRouter from "./routes/authRoutes.js";
 import bookRoutes from "./routes/bookRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 import multer from "multer";
 
 const app = express();
@@ -25,6 +26,8 @@ const upload = multer({
 app.use("/api/auth", upload.single("profileImage"), authRouter);
 
 app.use("/api/books", upload.single("coverImage"), bookRoutes);
+
+app.use("/api/users", userRoutes);
 
 app.use("/api/profile", profileRoutes);
 

@@ -150,6 +150,7 @@ const bookSlice = createSlice({
     book: {
       reviews: [],
     },
+    user: {},
     userBooks: [],
     loading: false,
     error: null,
