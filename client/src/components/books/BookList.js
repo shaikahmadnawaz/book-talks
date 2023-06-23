@@ -6,6 +6,7 @@ import { MdOutlineRateReview } from "react-icons/md";
 import { Rings } from "react-loader-spinner";
 import { toast } from "react-hot-toast";
 import Search from "./Search";
+import Filter from "./Filter";
 
 const BookList = () => {
   const dispatch = useDispatch();
@@ -18,6 +19,7 @@ const BookList = () => {
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   useEffect(() => {
     dispatch(fetchBooks(searchQuery));
@@ -47,20 +49,29 @@ const BookList = () => {
     setSelectedUserId(userId);
   };
 
-  // if (loading) {
-  //   return (
-  //     <div className="flex justify-center items-center h-screen">
-  //       <Rings
-  //         height={80}
-  //         width={80}
-  //         color="#21BF73"
-  //         radius={6}
-  //         visible={true}
-  //         ariaLabel="rings-loading"
-  //       />
-  //     </div>
-  //   );
-  // }
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+    setSearchQuery("");
+  };
+
+  const filteredBooks = selectedCategory
+    ? books.filter((book) => book.category === selectedCategory)
+    : books;
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Rings
+          height={80}
+          width={80}
+          color="#21BF73"
+          radius={6}
+          visible={true}
+          ariaLabel="rings-loading"
+        />
+      </div>
+    );
+  }
 
   if (error) {
     return <p className="text-red-500">Error: {error.message}</p>;
@@ -91,8 +102,13 @@ const BookList = () => {
 
       <Search searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
+      <Filter
+        selectedCategory={selectedCategory}
+        handleCategoryChange={handleCategoryChange}
+      />
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        {(searchQuery ? searchResults : books).map((book) => (
+        {filteredBooks.map((book) => (
           <div
             key={book._id}
             className="rounded-lg overflow-hidden border border-primary"
