@@ -58,20 +58,20 @@ const BookList = () => {
     ? books.filter((book) => book.category === selectedCategory)
     : books;
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <Rings
-          height={80}
-          width={80}
-          color="#21BF73"
-          radius={6}
-          visible={true}
-          ariaLabel="rings-loading"
-        />
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="flex justify-center items-center h-screen">
+  //       <Rings
+  //         height={80}
+  //         width={80}
+  //         color="#21BF73"
+  //         radius={6}
+  //         visible={true}
+  //         ariaLabel="rings-loading"
+  //       />
+  //     </div>
+  //   );
+  // }
 
   if (error) {
     return <p className="text-red-500">Error: {error.message}</p>;
@@ -108,7 +108,7 @@ const BookList = () => {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        {filteredBooks.map((book) => (
+        {(searchQuery ? searchResults : filteredBooks).map((book) => (
           <div
             key={book._id}
             className="rounded-lg overflow-hidden border border-primary"
