@@ -6,13 +6,15 @@ import {
   addReview,
   deleteReview,
   editReview,
+  deleteBook,
 } from "../../redux/bookSlice";
 import ReviewForm from "../reviews/ReviewForm";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Rings } from "react-loader-spinner";
 import { formatDistanceToNow } from "date-fns";
 
 const BookDetails = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { bookId } = useParams();
   const book = useSelector((store) => store.books.book);
@@ -28,6 +30,21 @@ const BookDetails = () => {
   useEffect(() => {
     dispatch(getBook({ id: bookId }));
   }, [dispatch, bookId]);
+
+  const handleDeleteBook = () => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this book?"
+    );
+    if (confirmDelete) {
+      dispatch(deleteBook(book._id))
+        .then(() => {
+          navigate("/");
+        })
+        .catch((error) => {
+          console.error("Error deleting book:", error);
+        });
+    }
+  };
 
   const handleAddReview = (comment, rating) => {
     dispatch(addReview({ bookId, comment, rating }))
@@ -137,6 +154,12 @@ const BookDetails = () => {
               year: "numeric",
             })}
           </p>
+          <button
+            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+            onClick={handleDeleteBook}
+          >
+            Delete Book
+          </button>
         </div>
         {isUser ? (
           <div className="mb-4">
