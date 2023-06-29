@@ -59,7 +59,7 @@ const BookDetails = () => {
   const handleAddReview = (comment, rating) => {
     dispatch(addReview({ bookId, comment, rating }))
       .then(() => {
-        dispatch(()=>getBook({ id: bookId })).catch((error) => {
+        dispatch(() => getBook({ id: bookId })).catch((error) => {
           console.error("Error fetching book:", error);
         });
       })
@@ -212,7 +212,7 @@ const BookDetails = () => {
                     </p>
                   </div>
                 </div>
-                {isUser && isUser._id === review.user && (
+                {isUser && isUser._id === review.user._id && (
                   <div className="flex items-center mt-1">
                     {editingReviewId === review._id ? (
                       <>
