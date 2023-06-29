@@ -3,36 +3,63 @@ import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import {
   getBook,
+  getReviews,
   addReview,
   deleteReview,
   editReview,
+  deleteBook,
 } from "../../redux/bookSlice";
 import ReviewForm from "../reviews/ReviewForm";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Rings } from "react-loader-spinner";
 import { formatDistanceToNow } from "date-fns";
 
 const BookDetails = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { bookId } = useParams();
   const book = useSelector((store) => store.books.book);
   console.log(book);
   const loading = useSelector((state) => state.books.loading);
-  const reviews = useSelector((store) => store.books.book.reviews);
+  const reviews = useSelector((store) => store.books.reviews);
   console.log("reviews", reviews);
   const isUser = useSelector((store) => store.auth.user);
+  console.log("isUser", isUser);
   const [editingReviewId, setEditingReviewId] = useState(null);
   const [editReviewText, setEditReviewText] = useState("");
   const [editReviewRating, setEditReviewRating] = useState(0);
 
   useEffect(() => {
-    dispatch(getBook({ id: bookId }));
+    dispatch(getBook({ id: bookId }))
+      .then(() => {
+        dispatch(getReviews(bookId)).catch((error) => {
+          console.error("Error fetching reviews:", error);
+        });
+      })
+      .catch((error) => {
+        console.error("Error fetching book:", error);
+      });
   }, [dispatch, bookId]);
+
+  const handleDeleteBook = () => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this book?"
+    );
+    if (confirmDelete) {
+      dispatch(deleteBook(book._id))
+        .then(() => {
+          navigate("/");
+        })
+        .catch((error) => {
+          console.error("Error deleting book:", error);
+        });
+    }
+  };
 
   const handleAddReview = (comment, rating) => {
     dispatch(addReview({ bookId, comment, rating }))
       .then(() => {
-        dispatch(getBook({ id: bookId })).catch((error) => {
+        dispatch(() => getBook({ id: bookId })).catch((error) => {
           console.error("Error fetching book:", error);
         });
       })
@@ -79,26 +106,29 @@ const BookDetails = () => {
     }
   }, [editingReviewId, reviews]);
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <Rings
-          height="80"
-          width="80"
-          color="#21BF73"
-          radius="6"
-          wrapperStyle={{}}
-          wrapperClass=""
-          visible={true}
-          ariaLabel="rings-loading"
-        />
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="flex justify-center items-center h-screen">
+  //       <Rings
+  //         height="80"
+  //         width="80"
+  //         color="#21BF73"
+  //         radius="6"
+  //         wrapperStyle={{}}
+  //         wrapperClass=""
+  //         visible={true}
+  //         ariaLabel="rings-loading"
+  //       />
+  //     </div>
+  //   );
+  // }
 
   if (!book) {
     return <p>Book not found</p>;
   }
+
+  const isCurrentUserOwner = isUser && isUser._id === book.user;
+  console.log("isCurrentUserOwner", isCurrentUserOwner);
 
   return (
     <div className="bg-gray-100 p-4">
@@ -137,6 +167,14 @@ const BookDetails = () => {
               year: "numeric",
             })}
           </p>
+          {isCurrentUserOwner && (
+            <button
+              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+              onClick={handleDeleteBook}
+            >
+              Delete Book
+            </button>
+          )}
         </div>
         {isUser ? (
           <div className="mb-4">
@@ -154,7 +192,7 @@ const BookDetails = () => {
         <h3 className="text-xl font-bold mb-2">Reviews:</h3>
         {reviews.length > 0 ? (
           <ul>
-            {reviews.map((review) => (
+            {reviews?.map((review) => (
               <li key={review._id} className="mb-4">
                 <div className="flex items-center">
                   <img
@@ -174,7 +212,7 @@ const BookDetails = () => {
                     </p>
                   </div>
                 </div>
-                {isUser && isUser._id === review.user && (
+                {isUser && isUser._id === review.user._id && (
                   <div className="flex items-center mt-1">
                     {editingReviewId === review._id ? (
                       <>

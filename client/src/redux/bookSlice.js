@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getAllBooks } from "../services/book";
+import { getAllBooks, getBookReviews } from "../services/book";
 import axios from "axios";
 import { BASE_URL } from "../config/url";
 import { toast } from "react-hot-toast";
@@ -13,6 +13,22 @@ export const fetchBooks = createAsyncThunk("books/fetchBooks", async () => {
     throw new Error("Failed to fetch books");
   }
 });
+
+// Async thunk action to get reviews for a book
+export const getReviews = createAsyncThunk(
+  "books/getReviews",
+  async (bookId, { rejectWithValue }) => {
+    try {
+      const response = await getBookReviews(bookId);
+      return response;
+    } catch (error) {
+      if (!error?.response) {
+        throw error;
+      }
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
 
 export const addBook = createAsyncThunk(
   "api/addBooks",
@@ -36,6 +52,7 @@ export const addBook = createAsyncThunk(
 export const getBook = createAsyncThunk(
   "api/books/:id",
   async (payload, { rejectWithValue }) => {
+    console.log("Get book Dispatching")
     try {
       const response = await axios.get(`${BASE_URL}/api/books/${payload.id}`, {
         headers: {
@@ -43,6 +60,44 @@ export const getBook = createAsyncThunk(
         },
       });
 
+      return response.data;
+    } catch (error) {
+      if (!error?.response) {
+        throw error;
+      }
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
+export const updateBook = createAsyncThunk(
+  "books/updateBook",
+  async ({ id, book }, { rejectWithValue }) => {
+    try {
+      const response = await axios.patch(`${BASE_URL}/api/books/${id}`, book, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      if (!error?.response) {
+        throw error;
+      }
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
+export const deleteBook = createAsyncThunk(
+  "books/deleteBook",
+  async (bookId, { rejectWithValue }) => {
+    try {
+      const response = await axios.delete(`${BASE_URL}/api/books/${bookId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       return response.data;
     } catch (error) {
       if (!error?.response) {
@@ -147,9 +202,8 @@ const bookSlice = createSlice({
   name: "books",
   initialState: {
     books: [],
-    book: {
-      reviews: [],
-    },
+    book: {},
+    reviews: [],
     user: {},
     userBooks: [],
     loading: false,
@@ -179,6 +233,9 @@ const bookSlice = createSlice({
       .addCase(getBook.fulfilled, (state, { payload }) => {
         state.loading = false;
         state.book = payload.book;
+        state.reviews = payload.book.reviews;
+        console.log(state.reviews)
+        console.log(payload.book)
       })
       .addCase(getBook.rejected, (state, { payload }) => {
         state.loading = false;
@@ -206,7 +263,8 @@ const bookSlice = createSlice({
       .addCase(addReview.fulfilled, (state, action) => {
         state.loading = false;
         // Updating the book's reviews with the new review
-        state.book.reviews.push(action.payload.review);
+        console.log(action.payload);
+        state.reviews = action.payload.reviews;
         toast.success("Review added successfully");
       })
       .addCase(addReview.rejected, (state, action) => {
@@ -235,7 +293,7 @@ const bookSlice = createSlice({
       .addCase(deleteReview.fulfilled, (state, action) => {
         state.loading = false;
         // Removing the deleted review from the book's reviews
-        state.book.reviews = state.book.reviews.filter(
+        state.reviews = state.reviews.filter(
           (review) => review._id !== action.payload.reviewId
         );
       })
@@ -253,7 +311,7 @@ const bookSlice = createSlice({
         const editedReview = action.payload?.review;
         if (editedReview) {
           // Finding the edited review and update its comment
-          state.book.reviews = state.book.reviews.map((review) => {
+          state.reviews = state.reviews.map((review) => {
             if (review._id === editedReview._id) {
               return { ...review, comment: editedReview.comment };
             }
@@ -264,6 +322,51 @@ const bookSlice = createSlice({
         }
       })
       .addCase(editReview.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
+
+    builder
+      .addCase(updateBook.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateBook.fulfilled, (state, action) => {
+        state.loading = false;
+        state.book = action.payload.book;
+        toast.success("Book updated successfully");
+      })
+      .addCase(updateBook.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        toast.error("Failed to update book");
+      });
+
+    builder
+      .addCase(deleteBook.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteBook.fulfilled, (state, action) => {
+        state.loading = false;
+        state.books = state.books.filter(
+          (book) => book._id !== action.payload.deletedBook._id
+        );
+        toast.success("Book deleted successfully");
+      })
+      .addCase(deleteBook.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
+
+    builder
+      .addCase(getReviews.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getReviews.fulfilled, (state, action) => {
+        state.loading = false;
+        state.reviews = action.payload.reviews;
+      })
+      .addCase(getReviews.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });
