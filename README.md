@@ -55,9 +55,9 @@ To get started with the Book Talks application, follow the instructions below.
    MONGO_URL="your-mongodb-uri"
    JWT_SECRET="your-jwt-secret"
 
-   AWS_REGION="your-aws-region"
-   AWS_ACCESS_KEY="your-aws-access-key"
-   AWS_SECRET_ACCESS_KEY="your-aws-secret-access-key"
+   AWS_ACCOUNT_REGION="your-aws-region"
+   AWS_ACCOUNT_ACCESS_KEY="your-aws-access-key"
+   AWS_ACCOUNT_SECRET_ACCESS_KEY="your-aws-secret-access-key"
    AWS_BUCKET_NAME="your-aws-bucket-name"
    ```
 
