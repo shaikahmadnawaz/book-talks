@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getAllBooks } from "../services/book";
+import { getAllBooks, getBookReviews } from "../services/book";
 import axios from "axios";
 import { BASE_URL } from "../config/url";
 import { toast } from "react-hot-toast";
@@ -13,6 +13,22 @@ export const fetchBooks = createAsyncThunk("books/fetchBooks", async () => {
     throw new Error("Failed to fetch books");
   }
 });
+
+// Async thunk action to get reviews for a book
+export const getReviews = createAsyncThunk(
+  "books/getReviews",
+  async (bookId, { rejectWithValue }) => {
+    try {
+      const response = await getBookReviews(bookId);
+      return response;
+    } catch (error) {
+      if (!error?.response) {
+        throw error;
+      }
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
 
 export const addBook = createAsyncThunk(
   "api/addBooks",
@@ -333,6 +349,19 @@ const bookSlice = createSlice({
         toast.success("Book deleted successfully");
       })
       .addCase(deleteBook.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
+
+    builder
+      .addCase(getReviews.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getReviews.fulfilled, (state, action) => {
+        state.loading = false;
+        state.reviews = action.payload.reviews;
+      })
+      .addCase(getReviews.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });

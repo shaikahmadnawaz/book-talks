@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import {
   getBook,
+  getReviews,
   addReview,
   deleteReview,
   editReview,
@@ -29,7 +30,14 @@ const BookDetails = () => {
   const [editReviewRating, setEditReviewRating] = useState(0);
 
   useEffect(() => {
-    dispatch(getBook({ id: bookId }));
+    dispatch(getBook({ id: bookId }))
+      .then(() => {
+        // Once the book details are fetched, fetch the reviews for the book
+        dispatch(getReviews({ bookId }));
+      })
+      .catch((error) => {
+        console.error("Error fetching book:", error);
+      });
   }, [dispatch, bookId]);
 
   const handleDeleteBook = () => {
