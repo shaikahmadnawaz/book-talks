@@ -32,8 +32,9 @@ const BookDetails = () => {
   useEffect(() => {
     dispatch(getBook({ id: bookId }))
       .then(() => {
-        // Once the book details are fetched, fetch the reviews for the book
-        dispatch(getReviews(bookId));
+        dispatch(getReviews(bookId)).catch((error) => {
+          console.error("Error fetching reviews:", error);
+        });
       })
       .catch((error) => {
         console.error("Error fetching book:", error);
@@ -105,22 +106,22 @@ const BookDetails = () => {
     }
   }, [editingReviewId, reviews]);
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <Rings
-          height="80"
-          width="80"
-          color="#21BF73"
-          radius="6"
-          wrapperStyle={{}}
-          wrapperClass=""
-          visible={true}
-          ariaLabel="rings-loading"
-        />
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="flex justify-center items-center h-screen">
+  //       <Rings
+  //         height="80"
+  //         width="80"
+  //         color="#21BF73"
+  //         radius="6"
+  //         wrapperStyle={{}}
+  //         wrapperClass=""
+  //         visible={true}
+  //         ariaLabel="rings-loading"
+  //       />
+  //     </div>
+  //   );
+  // }
 
   if (!book) {
     return <p>Book not found</p>;
