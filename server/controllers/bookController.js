@@ -170,7 +170,13 @@ export const getReviews = asyncHandler(async (req, res) => {
       return res.status(404).json({ message: "Book Not Found!" });
     }
 
-    const reviews = await Book.findById(bookId).populate("reviews");
+    const reviews = await Book.findById(bookId).populate({
+      path: "reviews",
+      populate: {
+        path: "user",
+        select: "name profileImage",
+      },
+    });
     return res.status(200).json({ message: "Reviews sent", reviews });
   } catch (error) {
     return res.status(500).json({ message: "Server Error" });

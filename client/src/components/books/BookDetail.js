@@ -33,7 +33,7 @@ const BookDetails = () => {
     dispatch(getBook({ id: bookId }))
       .then(() => {
         // Once the book details are fetched, fetch the reviews for the book
-        dispatch(getReviews({ bookId }));
+        dispatch(getReviews(bookId));
       })
       .catch((error) => {
         console.error("Error fetching book:", error);

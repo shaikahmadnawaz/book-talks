@@ -14,7 +14,7 @@ export const getAllBooks = async () => {
 export const getBookReviews = async (bookId) => {
   try {
     const response = await axios.get(
-      `${BASE_URL}/api/books/${bookId}/reviews`,
+      `${BASE_URL}/api/books/book/${bookId}/reviews`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -22,7 +22,7 @@ export const getBookReviews = async (bookId) => {
       }
     );
     console.log(response.data);
-    return response.data;
+    return response.data.reviews;
   } catch (error) {
     throw new Error("Failed to fetch book reviews");
   }
