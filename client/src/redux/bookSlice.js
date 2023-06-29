@@ -52,6 +52,7 @@ export const addBook = createAsyncThunk(
 export const getBook = createAsyncThunk(
   "api/books/:id",
   async (payload, { rejectWithValue }) => {
+    console.log("Get book Dispatching")
     try {
       const response = await axios.get(`${BASE_URL}/api/books/${payload.id}`, {
         headers: {
@@ -232,6 +233,9 @@ const bookSlice = createSlice({
       .addCase(getBook.fulfilled, (state, { payload }) => {
         state.loading = false;
         state.book = payload.book;
+        state.reviews = payload.book.reviews;
+        console.log(state.reviews)
+        console.log(payload.book)
       })
       .addCase(getBook.rejected, (state, { payload }) => {
         state.loading = false;
@@ -259,7 +263,8 @@ const bookSlice = createSlice({
       .addCase(addReview.fulfilled, (state, action) => {
         state.loading = false;
         // Updating the book's reviews with the new review
-        state.reviews.push(action.payload.review);
+        console.log(action.payload);
+        state.reviews = action.payload.reviews;
         toast.success("Review added successfully");
       })
       .addCase(addReview.rejected, (state, action) => {

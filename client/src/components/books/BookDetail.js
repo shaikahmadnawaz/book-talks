@@ -59,7 +59,7 @@ const BookDetails = () => {
   const handleAddReview = (comment, rating) => {
     dispatch(addReview({ bookId, comment, rating }))
       .then(() => {
-        dispatch(getBook({ id: bookId })).catch((error) => {
+        dispatch(()=>getBook({ id: bookId })).catch((error) => {
           console.error("Error fetching book:", error);
         });
       })

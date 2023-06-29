@@ -201,14 +201,17 @@ export const addReview = asyncHandler(async (req, res) => {
         user: userId,
         book: req.params.id,
       });
-
+      const book = await Book.findById(req.params.id).populate([
+        { path: "reviews", populate: { path: "user" } },
+      ]);
       return res
         .status(200)
-        .json({ message: "Review created", review: newReview });
+        .json({ message: "Review created", review: newReview,reviews : book.reviews });
     }
 
     return res.status(404).json({ message: "Book not found" });
   } catch (err) {
+    console.log(err);
     return res.status(500).json({ message: err.message });
   }
 });
