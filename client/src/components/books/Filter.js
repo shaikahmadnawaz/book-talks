@@ -6,6 +6,7 @@ const Filter = ({ selectedCategory, handleCategoryChange }) => {
     { label: "Fiction", value: "fiction" },
     { label: "Non-fiction", value: "non-fiction" },
     { label: "Mystery", value: "mystery" },
+    { label: "Comics", value: "comics" },
   ];
 
   return (

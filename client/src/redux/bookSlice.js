@@ -185,9 +185,8 @@ const bookSlice = createSlice({
   name: "books",
   initialState: {
     books: [],
-    book: {
-      reviews: [],
-    },
+    book: {},
+    reviews: [],
     user: {},
     userBooks: [],
     loading: false,
@@ -244,7 +243,7 @@ const bookSlice = createSlice({
       .addCase(addReview.fulfilled, (state, action) => {
         state.loading = false;
         // Updating the book's reviews with the new review
-        state.book.reviews.push(action.payload.review);
+        state.reviews.push(action.payload.review);
         toast.success("Review added successfully");
       })
       .addCase(addReview.rejected, (state, action) => {
@@ -273,7 +272,7 @@ const bookSlice = createSlice({
       .addCase(deleteReview.fulfilled, (state, action) => {
         state.loading = false;
         // Removing the deleted review from the book's reviews
-        state.book.reviews = state.book.reviews.filter(
+        state.reviews = state.reviews.filter(
           (review) => review._id !== action.payload.reviewId
         );
       })
@@ -291,7 +290,7 @@ const bookSlice = createSlice({
         const editedReview = action.payload?.review;
         if (editedReview) {
           // Finding the edited review and update its comment
-          state.book.reviews = state.book.reviews.map((review) => {
+          state.reviews = state.reviews.map((review) => {
             if (review._id === editedReview._id) {
               return { ...review, comment: editedReview.comment };
             }

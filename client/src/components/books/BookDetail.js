@@ -20,9 +20,10 @@ const BookDetails = () => {
   const book = useSelector((store) => store.books.book);
   console.log(book);
   const loading = useSelector((state) => state.books.loading);
-  const reviews = useSelector((store) => store.books.book.reviews);
+  const reviews = useSelector((store) => store.books.reviews);
   console.log("reviews", reviews);
   const isUser = useSelector((store) => store.auth.user);
+  console.log("isUser", isUser);
   const [editingReviewId, setEditingReviewId] = useState(null);
   const [editReviewText, setEditReviewText] = useState("");
   const [editReviewRating, setEditReviewRating] = useState(0);
@@ -117,6 +118,9 @@ const BookDetails = () => {
     return <p>Book not found</p>;
   }
 
+  const isCurrentUserOwner = isUser && isUser._id === book.user;
+  console.log("isCurrentUserOwner", isCurrentUserOwner);
+
   return (
     <div className="bg-gray-100 p-4">
       <div className="max-w-2xl mx-auto">
@@ -154,12 +158,14 @@ const BookDetails = () => {
               year: "numeric",
             })}
           </p>
-          <button
-            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-            onClick={handleDeleteBook}
-          >
-            Delete Book
-          </button>
+          {isCurrentUserOwner && (
+            <button
+              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+              onClick={handleDeleteBook}
+            >
+              Delete Book
+            </button>
+          )}
         </div>
         {isUser ? (
           <div className="mb-4">
@@ -177,7 +183,7 @@ const BookDetails = () => {
         <h3 className="text-xl font-bold mb-2">Reviews:</h3>
         {reviews.length > 0 ? (
           <ul>
-            {reviews.map((review) => (
+            {reviews?.map((review) => (
               <li key={review._id} className="mb-4">
                 <div className="flex items-center">
                   <img
