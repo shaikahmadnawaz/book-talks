@@ -24,13 +24,13 @@ function App() {
         <Routes>
           <Route path="/user" element={<ProtectedRoute />}>
             <Route path="book/new" element={<BookForm />} />
-            <Route path="book/:bookId" element={<BookDetail />} />
             <Route path="profile" element={<UserProfile />} />
-            <Route path="profile/:userId" element={<BookUser />} />
           </Route>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
+          <Route path="/book/:bookId" element={<BookDetail />} />
+          <Route path="/book/profile/:userId" element={<BookUser />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
         <Footer />
