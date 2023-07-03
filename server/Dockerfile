@@ -1,4 +1,4 @@
-FROM node:14-alpine
+FROM node:14
 
 # We use nodemon to restart the server every time there's a change
 RUN npm install -g nodemon

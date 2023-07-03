@@ -84,7 +84,7 @@ const BookList = () => {
         <div className="flex justify-center m-4">
           {isAuthenticated ? (
             <Link
-              to="/new"
+              to="/user/book/new"
               className="rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-dark"
             >
               Add New Book
@@ -128,7 +128,7 @@ const BookList = () => {
               <p className="mb-3 leading-relaxed">{book.description}</p>
               <div className="flex items-center flex-wrap justify-between">
                 <Link
-                  to={`/${book._id}`}
+                  to={`/user/book/${book._id}`}
                   className="inline-flex items-center text-secondary bg-primary px-4 py-2 rounded-sm cursor-pointer transition duration-300 ease-in-out hover:bg-primary-light hover:text-white"
                 >
                   Read More
@@ -168,7 +168,7 @@ const BookList = () => {
                 </div>
               </div>
               <div className="flex items-center mt-4">
-                <Link to={`/profile/${book.user.id}`}>
+                <Link to={`/user/profile/${book.user.id}`}>
                   <img
                     className="w-8 h-8 rounded-full mr-2 cursor-pointer"
                     src={book.user.profileImage}
@@ -177,7 +177,7 @@ const BookList = () => {
                 </Link>
                 <div>
                   <Link
-                    to={`/profile/${book.user.id}`}
+                    to={`/user/profile/${book.user.id}`}
                     className="text-sm font-medium text-gray-600 cursor-pointer"
                     onClick={() => handleUserClick(book.user.id)}
                   >

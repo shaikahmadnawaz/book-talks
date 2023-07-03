@@ -1,4 +1,4 @@
-# Layer 1: Telling Docker to use the node:17-alpine image as the base image for the container.
+# Layer 1: Telling Docker to use the node:14-alpine image as the base image for the container.
 FROM node:14-alpine
 
 # Layer 2: Telling Docker to create a directory called `app` in the container and set it as the working directory.
