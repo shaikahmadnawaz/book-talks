@@ -1,5 +1,4 @@
 import jwt from "jsonwebtoken";
-// import User from "../models/User.js";
 
 const protect = async (req, res, next) => {
   let token;
@@ -9,14 +8,16 @@ const protect = async (req, res, next) => {
     req.headers.authorization.startsWith("Bearer")
   ) {
     try {
-      // Extract the token from the Authorization header
+      // Extracting the token from the Authorization header
       token = req.headers.authorization.split(" ")[1];
 
-      // Verify the token
+      // Verifying the token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      // Fetch the user associated with the token
-      // req.user = await User.findById(decoded.userId).select("-password");
+      console.log(decoded);
+
+      // Fetching the user associated with the token
       req.userId = decoded.userId;
+      console.log(req.userId);
       next();
     } catch (error) {
       console.error(error);

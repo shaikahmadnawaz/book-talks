@@ -13,6 +13,8 @@ import ReviewForm from "../reviews/ReviewForm";
 import { Link, useNavigate } from "react-router-dom";
 import { Rings } from "react-loader-spinner";
 import { formatDistanceToNow } from "date-fns";
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
 
 const BookDetails = () => {
   const navigate = useNavigate();
@@ -30,67 +32,72 @@ const BookDetails = () => {
   const [editReviewRating, setEditReviewRating] = useState(0);
 
   useEffect(() => {
-    dispatch(getBook({ id: bookId }))
-      .then(() => {
-        dispatch(getReviews(bookId)).catch((error) => {
-          console.error("Error fetching reviews:", error);
-        });
-      })
-      .catch((error) => {
-        console.error("Error fetching book:", error);
-      });
+    const fetchBook = async () => {
+      try {
+        await dispatch(getBook({ id: bookId }));
+        await dispatch(getReviews(bookId));
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchBook();
   }, [dispatch, bookId]);
 
-  const handleDeleteBook = () => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this book?"
-    );
-    if (confirmDelete) {
-      dispatch(deleteBook(book._id))
-        .then(() => {
-          navigate("/");
-        })
-        .catch((error) => {
-          console.error("Error deleting book:", error);
-        });
+  const handleDeleteBook = async () => {
+    confirmAlert({
+      title: "Confirm Deletion",
+      message: "Are you sure you want to delete this book?",
+      buttons: [
+        {
+          label: "Yes",
+          onClick: async () => {
+            try {
+              await dispatch(deleteBook({ id: bookId }));
+              navigate("/", { replace: true });
+            } catch (error) {
+              console.error("Error deleting book:", error);
+            }
+          },
+        },
+        {
+          label: "No",
+          onClick: () => {},
+        },
+      ],
+    });
+  };
+
+  const handleAddReview = async (comment, rating) => {
+    try {
+      await dispatch(addReview({ bookId, comment, rating }));
+      await dispatch(getBook({ id: bookId }));
+    } catch (error) {
+      console.error("Error adding review:", error);
     }
   };
 
-  const handleAddReview = (comment, rating) => {
-    dispatch(addReview({ bookId, comment, rating }))
-      .then(() => {
-        dispatch(() => getBook({ id: bookId })).catch((error) => {
-          console.error("Error fetching book:", error);
-        });
-      })
-      .catch((error) => {
-        console.error("Error adding review:", error);
-      });
+  const handleDeleteReview = async (reviewId) => {
+    try {
+      await dispatch(deleteReview({ bookId, reviewId }));
+      await dispatch(getBook({ id: bookId }));
+    } catch (error) {
+      console.error("Error deleting review:", error);
+    }
   };
 
-  const handleDeleteReview = (reviewId) => {
-    dispatch(deleteReview({ bookId, reviewId }))
-      .then(() => {
-        dispatch(getBook({ id: bookId }));
-      })
-      .catch((error) => {
-        console.error("Error deleting review:", error);
-      });
-  };
-
-  const handleEditReview = (reviewId, comment, rating) => {
-    setEditingReviewId(null);
-    const reviewToEdit = reviews.find((review) => review._id === reviewId);
-    if (reviewToEdit) {
-      dispatch(editReview({ bookId, reviewId, comment, rating }))
-        .then(() => {
-          dispatch(getBook({ id: bookId }));
-        })
-        .catch((error) => {
-          console.error("Error editing review:", error);
-        });
-    } else {
-      console.error("Review not found");
+  const handleEditReview = async (reviewId, comment, rating) => {
+    try {
+      setEditingReviewId(null);
+      const reviewToEdit = reviews.find((review) => review._id === reviewId);
+      if (reviewToEdit) {
+        await dispatch(editReview({ bookId, reviewId, comment, rating }));
+        await dispatch(getBook({ id: bookId }));
+      } else {
+        console.error("Review not found");
+      }
+    } catch (error) {
+      console.error("Error editing review:", error);
     }
   };
 

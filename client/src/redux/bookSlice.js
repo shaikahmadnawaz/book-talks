@@ -52,7 +52,7 @@ export const addBook = createAsyncThunk(
 export const getBook = createAsyncThunk(
   "api/books/:id",
   async (payload, { rejectWithValue }) => {
-    console.log("Get book Dispatching")
+    console.log("Get book Dispatching");
     try {
       const response = await axios.get(`${BASE_URL}/api/books/${payload.id}`, {
         headers: {
@@ -91,13 +91,16 @@ export const updateBook = createAsyncThunk(
 
 export const deleteBook = createAsyncThunk(
   "books/deleteBook",
-  async (bookId, { rejectWithValue }) => {
+  async (payload, { rejectWithValue }) => {
     try {
-      const response = await axios.delete(`${BASE_URL}/api/books/${bookId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await axios.delete(
+        `${BASE_URL}/api/books/${payload.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
       return response.data;
     } catch (error) {
       if (!error?.response) {
@@ -234,8 +237,8 @@ const bookSlice = createSlice({
         state.loading = false;
         state.book = payload.book;
         state.reviews = payload.book.reviews;
-        console.log(state.reviews)
-        console.log(payload.book)
+        console.log(state.reviews);
+        console.log(payload.book);
       })
       .addCase(getBook.rejected, (state, { payload }) => {
         state.loading = false;

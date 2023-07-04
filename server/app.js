@@ -18,11 +18,10 @@ app.use(bodyParser.json());
 const upload = multer({
   storage: multer.memoryStorage(), // Store the file in memory as a Buffer
   limits: {
-    fileSize: 25 * 1024 * 1024, // Limit the file size to 5MB
+    fileSize: 25 * 1024 * 1024, // Limit the file size to 25MB
   },
 });
 
-// Routes for user authentication
 app.use("/api/auth", upload.single("profileImage"), authRouter);
 
 app.use("/api/books", upload.single("coverImage"), bookRoutes);
@@ -33,7 +32,6 @@ app.use("/api/profile", profileRoutes);
 
 const port = process.env.PORT || 5000;
 
-// Start the server
 const start = async () => {
   try {
     await connectDB(process.env.MONGO_URL);
