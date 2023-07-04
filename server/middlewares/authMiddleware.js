@@ -13,14 +13,12 @@ const protect = async (req, res, next) => {
 
       // Verifying the token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      console.log(decoded);
 
       // Fetching the user associated with the token
       req.userId = decoded.userId;
       console.log(req.userId);
       next();
     } catch (error) {
-      console.error(error);
       res.status(401).json({ message: "Not authorized, token failed" });
     }
   }

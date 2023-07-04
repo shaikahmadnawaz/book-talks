@@ -258,19 +258,32 @@ const bookSlice = createSlice({
         toast.error(payload.message);
       });
 
-    // Adding the addReview case to the extraReducers
     builder
-      .addCase(addReview.pending, (state) => {
+      .addCase(updateBook.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateBook.fulfilled, (state, action) => {
+        state.loading = false;
+        state.book = action.payload.book;
+        toast.success("Book updated successfully");
+      })
+      .addCase(updateBook.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        toast.error("Failed to update book");
+      });
+
+    builder
+      .addCase(deleteBook.pending, (state) => {
         state.loading = true;
       })
-      .addCase(addReview.fulfilled, (state, action) => {
+      .addCase(deleteBook.fulfilled, (state, action) => {
         state.loading = false;
-        // Updating the book's reviews with the new review
-        console.log(action.payload);
-        state.reviews = action.payload.reviews;
-        toast.success("Review added successfully");
+        state.books = action.payload.books;
+        toast.success("Book deleted successfully");
       })
-      .addCase(addReview.rejected, (state, action) => {
+      .addCase(deleteBook.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });
@@ -290,17 +303,28 @@ const bookSlice = createSlice({
       });
 
     builder
-      .addCase(deleteReview.pending, (state) => {
+      .addCase(getReviews.pending, (state) => {
         state.loading = true;
       })
-      .addCase(deleteReview.fulfilled, (state, action) => {
+      .addCase(getReviews.fulfilled, (state, action) => {
         state.loading = false;
-        // Removing the deleted review from the book's reviews
-        state.reviews = state.reviews.filter(
-          (review) => review._id !== action.payload.reviewId
-        );
+        state.reviews = action.payload.reviews;
       })
-      .addCase(deleteReview.rejected, (state, action) => {
+      .addCase(getReviews.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
+
+    builder
+      .addCase(addReview.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(addReview.fulfilled, (state, action) => {
+        state.loading = false;
+        state.reviews = action.payload.reviews;
+        toast.success("Review added successfully");
+      })
+      .addCase(addReview.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });
@@ -330,46 +354,17 @@ const bookSlice = createSlice({
       });
 
     builder
-      .addCase(updateBook.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(updateBook.fulfilled, (state, action) => {
-        state.loading = false;
-        state.book = action.payload.book;
-        toast.success("Book updated successfully");
-      })
-      .addCase(updateBook.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-        toast.error("Failed to update book");
-      });
-
-    builder
-      .addCase(deleteBook.pending, (state) => {
+      .addCase(deleteReview.pending, (state) => {
         state.loading = true;
       })
-      .addCase(deleteBook.fulfilled, (state, action) => {
+      .addCase(deleteReview.fulfilled, (state, action) => {
         state.loading = false;
-        state.books = state.books.filter(
-          (book) => book._id !== action.payload.deletedBook._id
+        // Removing the deleted review from the book's reviews
+        state.reviews = state.reviews.filter(
+          (review) => review._id !== action.payload.reviewId
         );
-        toast.success("Book deleted successfully");
       })
-      .addCase(deleteBook.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-      });
-
-    builder
-      .addCase(getReviews.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(getReviews.fulfilled, (state, action) => {
-        state.loading = false;
-        state.reviews = action.payload.reviews;
-      })
-      .addCase(getReviews.rejected, (state, action) => {
+      .addCase(deleteReview.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });

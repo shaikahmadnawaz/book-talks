@@ -12,6 +12,7 @@ const BookList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const books = useSelector((state) => state.books.books);
+  console.log(books);
   const loading = useSelector((state) => state.books.loading);
   const error = useSelector((state) => state.books.error);
   const isAuthenticated = useSelector((state) => state.auth.user);
@@ -108,7 +109,7 @@ const BookList = () => {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        {(searchQuery ? searchResults : filteredBooks).map((book) => (
+        {(searchQuery ? searchResults : filteredBooks)?.map((book) => (
           <div
             key={book._id}
             className="rounded-lg overflow-hidden border border-primary"

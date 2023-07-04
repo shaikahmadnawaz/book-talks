@@ -24,9 +24,9 @@ router.get("/:id", getBookById);
 router.post("/", protect, addBook);
 router.patch("/:id", protect, updateBook);
 router.delete("/:id", protect, deleteBook);
+router.get("/book/:bookId/reviews", getReviews);
 router.post("/:id/reviews", protect, addReview);
 router.patch("/:id/reviews/:reviewId", protect, updateReview);
 router.delete("/:id/reviews/:reviewId", protect, deleteReview);
-router.get("/book/:bookId/reviews",  getReviews);
 
 export default router;

@@ -12,16 +12,10 @@ export const getBooks = asyncHandler(async (req, res) => {
     const books = await Book.find({})
       .populate({
         path: "reviews",
-        populate: {
-          path: "user",
-          select: "name profileImage",
-        },
       })
       .populate("user", "name profileImage");
     if (books.length > 0) {
-      res
-        .status(200)
-        .json({ message: "Books found", totalBooks: books.length, books });
+      res.status(200).json({ message: "Books found", books });
     } else {
       res.status(404).json({ message: "No books found" });
     }
@@ -36,7 +30,7 @@ export const getBooks = asyncHandler(async (req, res) => {
 export const getBookById = asyncHandler(async (req, res) => {
   try {
     const book = await Book.findById(req.params.id).populate([
-      { path: "reviews", populate: { path: "user" } },
+      { path: "reviews" },
     ]);
 
     if (book) {
@@ -53,18 +47,20 @@ export const getBookById = asyncHandler(async (req, res) => {
   }
 });
 
-// Controller action to get the user's books
+// @desc    Get all books by a user
+// @route   GET /api/books/myBooks
+// @access  Private
 export const getUserBooks = async (req, res) => {
   try {
     const userId = req.userId;
 
     const user = await User.findById(userId).populate("books");
-
-    // Return the user's books
-    res.json(user.books);
+    res.status(200).json(user.books);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Failed to fetch user's books" });
+    res
+      .status(500)
+      .json({ error: "Failed to fetch user's books", message: error.message });
   }
 };
 
@@ -88,10 +84,10 @@ export const addBook = asyncHandler(async (req, res) => {
     });
 
     if (req.file) {
-      // Upload the cover image to AWS S3
+      // Uploading the cover image to AWS S3
       await uploadImage(req.file, "cover-images", book._id);
 
-      // Set the cover image URL in the book model
+      // Setting the cover image URL in the book model
       book.coverImage = `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/cover-images/${book._id}/${req.file.originalname}`;
     }
 
@@ -125,7 +121,7 @@ export const updateBook = asyncHandler(async (req, res) => {
       }
 
       const updatedBook = await book.save();
-      res.status(200).json({ message: "Book updated", book: updatedBook });
+      res.status(201).json({ message: "Book updated", book: updatedBook });
     } else {
       res.status(404).json({ message: "Book not found" });
     }
@@ -175,7 +171,7 @@ export const getReviews = asyncHandler(async (req, res) => {
     ]);
     return res.status(200).json({ message: "Reviews sent", reviews });
   } catch (error) {
-    return res.status(500).json({ message: "Server Error" });
+    return res.status(500).json({ message: error.message });
   }
 });
 
@@ -185,9 +181,9 @@ export const getReviews = asyncHandler(async (req, res) => {
 export const addReview = asyncHandler(async (req, res) => {
   const { comment, rating } = req.body;
 
-  // if (!comment || !rating) {
-  //   return res.status(400).json({ message: "Please fill all required fields" });
-  // }
+  if (!comment || !rating) {
+    return res.status(400).json({ message: "Please fill all required fields" });
+  }
 
   try {
     const book = await Book.findById(req.params.id);
@@ -204,9 +200,11 @@ export const addReview = asyncHandler(async (req, res) => {
       const book = await Book.findById(req.params.id).populate([
         { path: "reviews", populate: { path: "user" } },
       ]);
-      return res
-        .status(200)
-        .json({ message: "Review created", review: newReview,reviews : book.reviews });
+      return res.status(200).json({
+        message: "Review created",
+        review: newReview,
+        reviews: book.reviews,
+      });
     }
 
     return res.status(404).json({ message: "Book not found" });
@@ -230,12 +228,10 @@ export const updateReview = asyncHandler(async (req, res) => {
       review.rating = rating;
 
       await review.save();
-      res.status(200).json({ message: "Review updated" });
+      res.status(200).json({ message: "Review updated", review });
     } else {
       res.status(404).json({ message: "Review not found" });
     }
-    // } else {
-    //   res.status(404).json({ message: "Book not found" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -253,7 +249,7 @@ export const deleteReview = asyncHandler(async (req, res) => {
     }
 
     const reviewId = req.params.reviewId;
-    const response = await Review.findByIdAndDelete(reviewId);
+    await Review.findByIdAndDelete(reviewId);
 
     res.status(201).json({ message: "Review removed" });
   } catch (error) {

@@ -21,6 +21,7 @@ const BookSchema = new mongoose.Schema(
     },
     category: {
       type: String,
+      required: true,
     },
     viewCount: {
       type: Number,
@@ -29,10 +30,11 @@ const BookSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      // required: true,
+      required: true,
     },
     coverImage: {
       type: String,
+      required: true,
     },
     createdAt: {
       type: Date,
