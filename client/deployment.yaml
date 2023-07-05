@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: booktalks
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: booktalks-client
+  template:
+    metadata:
+      labels:
+        app: booktalks-client
+    spec:
+      containers:
+        - name: booktlaks-client
+          image: book-talks-client
+          ports:
+            - containerPort: 80
