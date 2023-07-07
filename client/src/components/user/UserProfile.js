@@ -4,7 +4,6 @@ import UserBooks from "./UserBooks";
 
 const UserProfile = () => {
   const user = useSelector((state) => state.auth.user);
-  console.log(user);
 
   return (
     <div className="bg-white p-8 rounded shadow w-full">
@@ -31,7 +30,9 @@ const UserProfile = () => {
         </p>
       )}
 
-      <UserBooks />
+      <div className="mt-8">
+        <UserBooks />
+      </div>
     </div>
   );
 };
