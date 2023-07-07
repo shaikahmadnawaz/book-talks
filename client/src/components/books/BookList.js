@@ -12,7 +12,6 @@ const BookList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const books = useSelector((state) => state.books.books);
-  console.log(books);
   // const loading = useSelector((state) => state.books.loading);
   const error = useSelector((state) => state.books.error);
   const isAuthenticated = useSelector((state) => state.auth.user);
@@ -112,7 +111,7 @@ const BookList = () => {
         {(searchQuery ? searchResults : filteredBooks)?.map((book) => (
           <div
             key={book._id}
-            className="rounded-lg overflow-hidden border border-primary"
+            className="rounded-lg overflow-hidden border border-primary transition duration-300 ease-in-out transform hover:scale-105"
           >
             <img
               className="h-64 w-full object-cover object-center"

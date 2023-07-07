@@ -33,29 +33,30 @@ const Footer = () => {
               Shaik Ahmad Nawaz
             </a>
           </div>
-          <div className="flex items-center justify-center md:justify-end">
-            <a href="https://github.com/shaikahmadnawaz" className="mr-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-300 hover:border-gray-400">
-                <BsGithub size={14} />
-              </div>
+          <div className="flex items-center justify-center md:justify-end space-x-4">
+            <a
+              href="https://github.com/shaikahmadnawaz"
+              className="text-primary hover:text-primary-dark"
+            >
+              <BsGithub size={18} />
             </a>
             <a
-              href="https://www.linkedin.com/in/shaik-ahmad-nawaz-894425239"
-              className="mr-2"
+              href="https://www.linkedin.com/in/shaikahmadnawaz"
+              className="text-primary hover:text-primary-dark"
             >
-              <div className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-300 hover:border-gray-400">
-                <BsLinkedin size={14} />
-              </div>
+              <BsLinkedin size={18} />
             </a>
-            <a href="https://twitter.com/shaikahmadnawaz" className="mr-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-300 hover:border-gray-400">
-                <BsTwitter size={14} />
-              </div>
+            <a
+              href="https://twitter.com/shaikahmadnawaz"
+              className="text-primary hover:text-primary-dark"
+            >
+              <BsTwitter size={18} />
             </a>
-            <a href="https://www.instagram.com/shaikahmadnawaz/">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-300 hover:border-gray-400">
-                <BsInstagram size={14} />
-              </div>
+            <a
+              href="https://www.instagram.com/shaikahmadnawaz"
+              className="text-primary hover:text-primary-dark"
+            >
+              <BsInstagram size={18} />
             </a>
           </div>
         </div>

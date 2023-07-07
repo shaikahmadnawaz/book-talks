@@ -144,7 +144,7 @@ const BookForm = () => {
                 <option value="horror">Horror</option>
                 <option value="children">Children</option>
                 <option value="comics">Comics</option>
-                <option value="cookbooks">Cookbooks</option>
+                <option value="cookbooks">Cooking</option>
                 <option value="journals">Journals</option>
                 <option value="poetry">Poetry</option>
               </select>
