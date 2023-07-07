@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { BASE_URL } from "../config/url";
 
-// Fetch all users
+// Fetching all users
 export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
   try {
     const response = await axios.get(`${BASE_URL}/api/users`);
@@ -12,13 +12,12 @@ export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
   }
 });
 
-// Fetch a user by ID
+// Fetching a user by ID
 export const fetchUserById = createAsyncThunk(
   "users/fetchUserById",
   async (userId) => {
     try {
       const response = await axios.get(`${BASE_URL}/api/users/${userId}`);
-      console.log(response.data.user);
       return response.data.user;
     } catch (error) {
       throw new Error(error.response.data.message);
@@ -33,7 +32,6 @@ const userSlice = createSlice({
     loading: false,
     error: null,
     selectedUser: {},
-    user: {},
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -51,7 +49,9 @@ const userSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
         state.list = [];
-      })
+      });
+
+    builder
       .addCase(fetchUserById.pending, (state) => {
         state.loading = true;
         state.error = null;

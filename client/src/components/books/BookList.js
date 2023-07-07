@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { fetchBooks } from "../../redux/bookSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { MdOutlineRateReview } from "react-icons/md";
-import { Rings } from "react-loader-spinner";
+// import { Rings } from "react-loader-spinner";
 import { toast } from "react-hot-toast";
 import Search from "./Search";
 import Filter from "./Filter";
@@ -13,7 +13,7 @@ const BookList = () => {
   const navigate = useNavigate();
   const books = useSelector((state) => state.books.books);
   console.log(books);
-  const loading = useSelector((state) => state.books.loading);
+  // const loading = useSelector((state) => state.books.loading);
   const error = useSelector((state) => state.books.error);
   const isAuthenticated = useSelector((state) => state.auth.user);
 

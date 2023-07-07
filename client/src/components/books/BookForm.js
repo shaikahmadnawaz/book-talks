@@ -139,14 +139,11 @@ const BookForm = () => {
                 <option value="history">History</option>
                 <option value="business">Business</option>
                 <option value="self-help">Self-help</option>
-                <option value="science-fiction">Science Fiction</option>
                 <option value="fantasy">Fantasy</option>
                 <option value="thriller">Thriller</option>
                 <option value="horror">Horror</option>
                 <option value="children">Children</option>
-                <option value="young-adult">Young Adult</option>
                 <option value="comics">Comics</option>
-                <option value="art">Art</option>
                 <option value="cookbooks">Cookbooks</option>
                 <option value="journals">Journals</option>
                 <option value="poetry">Poetry</option>
@@ -155,7 +152,7 @@ const BookForm = () => {
             <div>
               <label
                 htmlFor="coverImage"
-                className="block mb-2 text-sm font-medium text-black dark:text-white"
+                className="block mb-2 text-sm font-medium text-black"
               >
                 Cover Image
               </label>

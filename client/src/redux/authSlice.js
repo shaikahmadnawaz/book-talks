@@ -20,9 +20,7 @@ export const loginUser = createAsyncThunk(
   async ({ email, password }) => {
     try {
       const response = await login(email, password);
-      // Save the token to local storage
       localStorage.setItem("token", response.token);
-      console.log(response);
       return response;
     } catch (error) {
       throw new Error(error.message);
@@ -37,7 +35,6 @@ export const signupUser = createAsyncThunk(
     try {
       console.log("Payload in frontend : ", payload);
       const response = await axios.post(`${BASE_URL}/api/auth/signup`, payload);
-      // Save the token to local storage
       localStorage.setItem("token", response.data.token);
       return response.data;
     } catch (error) {
@@ -51,7 +48,7 @@ export const signupUser = createAsyncThunk(
 
 // Async thunk action to handle user logout
 export const logoutUser = createAsyncThunk("auth/logout", async () => {
-  // Clear local storage and reset the state
+  // Clearing local storage and reset the state
   localStorage.removeItem("user");
   localStorage.removeItem("token");
   return null;
@@ -61,9 +58,7 @@ export const logoutUser = createAsyncThunk("auth/logout", async () => {
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {
-    // Additional reducers for managing the auth state if needed
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(loginUser.pending, (state) => {
@@ -92,7 +87,6 @@ const authSlice = createSlice({
       })
       .addCase(signupUser.fulfilled, (state, action) => {
         state.loading = false;
-        console.log(action.payload);
         toast.success("Signup successful!");
       })
       .addCase(signupUser.rejected, (state, action) => {

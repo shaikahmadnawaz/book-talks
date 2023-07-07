@@ -11,7 +11,7 @@ import {
 } from "../../redux/bookSlice";
 import ReviewForm from "../reviews/ReviewForm";
 import { Link, useNavigate } from "react-router-dom";
-import { Rings } from "react-loader-spinner";
+// import { Rings } from "react-loader-spinner";
 import { formatDistanceToNow } from "date-fns";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
@@ -22,7 +22,7 @@ const BookDetails = () => {
   const { bookId } = useParams();
   const book = useSelector((store) => store.books.book);
   console.log(book);
-  const loading = useSelector((state) => state.books.loading);
+  // const loading = useSelector((state) => state.books.loading);
   const reviews = useSelector((store) => store.books.reviews);
   console.log("reviews", reviews);
   const isUser = useSelector((store) => store.auth.user);

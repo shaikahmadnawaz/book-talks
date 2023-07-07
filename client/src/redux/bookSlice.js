@@ -52,7 +52,6 @@ export const addBook = createAsyncThunk(
 export const getBook = createAsyncThunk(
   "api/books/:id",
   async (payload, { rejectWithValue }) => {
-    console.log("Get book Dispatching");
     try {
       const response = await axios.get(`${BASE_URL}/api/books/${payload.id}`, {
         headers: {
@@ -134,7 +133,6 @@ export const addReview = createAsyncThunk(
   "books/addReview",
   async ({ bookId, comment, rating }, { rejectWithValue }) => {
     try {
-      console.log(bookId, comment, rating);
       const response = await axios.post(
         `${BASE_URL}/api/books/${bookId}/reviews`,
         { comment, rating },
@@ -158,7 +156,6 @@ export const deleteReview = createAsyncThunk(
   "books/deleteReview",
   async ({ bookId, reviewId }, { rejectWithValue }) => {
     try {
-      console.log(bookId, reviewId);
       const response = await axios.delete(
         `${BASE_URL}/api/books/${bookId}/reviews/${reviewId}`,
         {
@@ -200,7 +197,7 @@ export const editReview = createAsyncThunk(
   }
 );
 
-// Slice
+// bookSlice
 const bookSlice = createSlice({
   name: "books",
   initialState: {
@@ -220,9 +217,7 @@ const bookSlice = createSlice({
       })
       .addCase(fetchBooks.fulfilled, (state, action) => {
         state.loading = false;
-        console.log(action.payload.books, "present");
         state.books = action.payload.books;
-        console.log(action.payload.books);
       })
       .addCase(fetchBooks.rejected, (state, action) => {
         state.loading = false;
@@ -237,8 +232,6 @@ const bookSlice = createSlice({
         state.loading = false;
         state.book = payload.book;
         state.reviews = payload.book.reviews;
-        console.log(state.reviews);
-        console.log(payload.book);
       })
       .addCase(getBook.rejected, (state, { payload }) => {
         state.loading = false;
@@ -295,7 +288,6 @@ const bookSlice = createSlice({
       .addCase(fetchUserBooks.fulfilled, (state, action) => {
         state.loading = false;
         state.userBooks = action.payload;
-        console.log(state.userBooks);
       })
       .addCase(fetchUserBooks.rejected, (state, action) => {
         state.loading = false;
@@ -337,15 +329,13 @@ const bookSlice = createSlice({
         state.loading = false;
         const editedReview = action.payload?.review;
         if (editedReview) {
-          // Finding the edited review and update its comment
+          // Finding the edited review and updating its comment
           state.reviews = state.reviews.map((review) => {
             if (review._id === editedReview._id) {
               return { ...review, comment: editedReview.comment };
             }
             return review;
           });
-        } else {
-          console.error("Edited review not found");
         }
       })
       .addCase(editReview.rejected, (state, action) => {
@@ -371,5 +361,4 @@ const bookSlice = createSlice({
   },
 });
 
-// Export actions and reducer
 export default bookSlice.reducer;
