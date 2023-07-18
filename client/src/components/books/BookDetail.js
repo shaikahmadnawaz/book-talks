@@ -31,6 +31,18 @@ const BookDetails = () => {
   const [editReviewText, setEditReviewText] = useState("");
   const [editReviewRating, setEditReviewRating] = useState(0);
 
+  const calculateAverageRating = () => {
+    if (reviews.length === 0) return 0;
+
+    const sumOfRatings = reviews.reduce(
+      (total, review) => total + review.rating,
+      0
+    );
+    return sumOfRatings / reviews.length;
+  };
+
+  const averageRating = calculateAverageRating();
+
   useEffect(() => {
     const fetchBook = async () => {
       try {
@@ -163,6 +175,30 @@ const BookDetails = () => {
             alt={book.title}
           />
         </div>
+        <p>
+          {averageRating > 0 && ( // Display average rating section
+            <div className="mb-4">
+              <p className="text-gray-700 font-bold mb-2">Rating:</p>
+              <div className="flex items-center">
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <span
+                    key={index}
+                    className={`${
+                      index < averageRating
+                        ? "text-yellow-500"
+                        : "text-gray-400"
+                    }`}
+                  >
+                    ★
+                  </span>
+                ))}
+                <span className="ml-2 text-gray-600">
+                  {averageRating.toFixed(1)}
+                </span>
+              </div>
+            </div>
+          )}
+        </p>
         <div className="mb-4">
           <label className="text-gray-700 font-bold mb-2" htmlFor="createdDate">
             Created Date:

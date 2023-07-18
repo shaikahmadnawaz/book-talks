@@ -12,6 +12,7 @@ const BookList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const books = useSelector((state) => state.books.books);
+  console.log(books);
   const error = useSelector((state) => state.books.error);
   const isAuthenticated = useSelector((state) => state.auth.user);
 
@@ -21,6 +22,20 @@ const BookList = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 8;
+
+  const calculateAverageRating = () => {
+    if (!books.reviews || books.reviews.length === 0) return 0;
+
+    const sumOfRatings = books.reviews.reduce(
+      (total, review) => total + review.rating,
+      0
+    );
+    console.log(sumOfRatings);
+    return sumOfRatings / books.reviews.length;
+  };
+
+  const averageRating = calculateAverageRating();
+  console.log(averageRating);
 
   useEffect(() => {
     dispatch(fetchBooks(searchQuery));
@@ -122,6 +137,31 @@ const BookList = () => {
                   {book.title}
                 </h1>
                 <p className="mb-3 leading-relaxed">{book.description}</p>
+
+                <p>
+                  {book.rating >= 0 && ( // Display average rating section
+                    <div className="mb-4">
+                      <div className="flex items-center">
+                        {Array.from({ length: 5 }).map((_, index) => (
+                          <span
+                            key={index}
+                            className={`${
+                              index < book.rating
+                                ? "text-yellow-500"
+                                : "text-gray-400"
+                            }`}
+                          >
+                            ★
+                          </span>
+                        ))}
+                        <span className="ml-2 text-gray-600">
+                          {book.rating.toFixed(1)}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </p>
+
                 <div className="flex items-center flex-wrap justify-between">
                   <Link
                     to={`/book/${book._id}`}
