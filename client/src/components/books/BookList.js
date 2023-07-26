@@ -7,11 +7,13 @@ import { toast } from "react-hot-toast";
 import Search from "./Search";
 import Filter from "./Filter";
 import ReactPaginate from "react-paginate";
+import { Rings } from "react-loader-spinner";
 
 const BookList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const books = useSelector((state) => state.books.books);
+  const loading = useSelector((state) => state.books.loading);
   console.log(books);
   const error = useSelector((state) => state.books.error);
   const isAuthenticated = useSelector((state) => state.auth.user);
@@ -81,6 +83,23 @@ const BookList = () => {
   const handlePageChange = ({ selected }) => {
     setCurrentPage(selected);
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Rings
+          height="80"
+          width="80"
+          color="#21BF73"
+          radius="6"
+          wrapperStyle={{}}
+          wrapperClass=""
+          visible={true}
+          ariaLabel="rings-loading"
+        />
+      </div>
+    );
+  }
 
   if (error) {
     return <p className="text-red-500">Error: {error.message}</p>;
