@@ -1,0 +1,74 @@
+name: Build and Deploy
+
+# Run the workflow when code is pushed to the main branch
+on:
+  push:
+    branches:
+      - master
+
+# Set environment variables
+env:
+  MONGO_URL: ${{secrets.MONGO_URL}}
+  JWT_SECRET: ${{secrets.JWT_SECRET}}
+  AWS_BUCKET_NAME: ${{secrets.AWS_BUCKET_NAME}}
+  AWS_ACCOUNT_SECRET_ACCESS_KEY: ${{secrets.AWS_ACCOUNT_SECRET_ACCESS_KEY}}
+  AWS_ACCOUNT_REGION: ${{secrets.AWS_ACCOUNT_REGION}}
+  AWS_ACCOUNT_ACCESS_KEY: ${{secrets.AWS_ACCOUNT_ACCESS_KEY}}
+
+# This is the workflow that is being run.
+jobs:
+  build-and-deploy:
+    # This is telling GitHub to run the workflow on the latest version of Ubuntu.
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the code from the GitHub repository
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Install dependencies and run tests for the client application
+      - name: Install and Test Client
+        working-directory: ./client
+        run: |
+          npm install
+          # npm run test
+
+      # Install dependencies, export environment variables to be used by application and run tests for the server application
+      - name: Install and Test Server
+        working-directory: ./server
+        run: |
+          npm install
+          export MONGO_URL=$MONGO_URL
+          export JWT_SECRET=$JWT_SECRET
+          export AWS_ACCOUNT_ACCESS_KEY=$AWS_ACCOUNT_ACCESS_KEY
+          export AWS_ACCOUNT_REGION=$AWS_ACCOUNT_REGION
+          export AWS_ACCOUNT_SECRET_ACCESS_KEY=$AWS_ACCOUNT_SECRET_ACCESS_KEY
+          export AWS_BUCKET_NAME=$AWS_BUCKET_NAME
+          # npm run test
+
+      # Build a Docker image for the client application
+      - name: Build Client Docker Image
+        working-directory: ./client
+        # Build image with tag shaikahmadnawaz/booktalks:client
+        run: |
+          docker build -t shaikahmadnawaz/booktalks:client-${{github.run_number}} .
+
+      # Build a Docker image for the server application
+      - name: Build Server Docker Image
+        working-directory:
+          ./server
+          # Build image with tag shaikahmadnawaz/booktalks:server
+        run: |
+          docker build -t shaikahmadnawaz/booktalks:server-${{github.run_number}} .
+
+      # Login to Docker Hub using credentials from repository secrets
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Push the Docker images to Docker Hub
+      - name: Push Docker Images to Docker Hub
+        run: |
+          docker push shaikahmadnawaz/booktalks:client-${{github.run_number}}
+          docker push shaikahmadnawaz/booktalks:server-${{github.run_number}}

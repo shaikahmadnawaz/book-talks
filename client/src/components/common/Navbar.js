@@ -28,7 +28,9 @@ const Navbar = () => {
           <span>
             <BsFillJournalBookmarkFill className="text-primary p-1" size={35} />
           </span>
-          <span className="font-bold text-lg">Book Talks</span>
+          <span data-testid="app-header-heading" className="font-bold text-lg">
+            Book Talks
+          </span>
         </Link>
         <div className="hidden space-x-2 lg:block">
           {isLoggedIn ? (
