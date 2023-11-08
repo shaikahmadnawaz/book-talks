@@ -1,20 +1,26 @@
-# Layer 1: Telling Docker to use the node:14-alpine image as the base image for the container.
-FROM node:14-alpine
+# Stage 1
 
-# Layer 2: Telling Docker to create a directory called `app` in the container and set it as the working directory.
+FROM node:14-alpine as builder
+
 WORKDIR /app
 
-# Layer 3: Copying the package.json file from the root of the project to the `app` directory in the container.
 COPY package.json .
 
-# Layer 4: Installing the dependencies listed in the package.json file.
 RUN npm install
 
-# Layer 5: Copying all the files from the root of the project to the `app` directory in the container.
 COPY . .
 
-# Layer 6: Telling Docker that the container will listen on port 3000.
+# Stage 2
+
+FROM node:14-alpine as runner
+
+WORKDIR /app
+
+COPY --from=builder /app .
+
 EXPOSE 3000
 
-# Layer 7: Telling Docker to run the `npm start` command when the container is started.
 CMD ["npm", "start"]
+
+# To build the Docker image, run the following command from the client directory:
+# docker build -t react-client .

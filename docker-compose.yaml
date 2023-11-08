@@ -1,6 +1,5 @@
-# The version of the docker-compose.
-version: "3"
-# Telling docker-compose to build the client and server images and run them in containers.
+version: "3.8"
+
 services:
   client:
     # Telling docker-compose to build the client image using the Dockerfile in the client directory.
@@ -10,19 +9,10 @@ services:
     # Mapping the port 3000 on the host machine to the port 3000 on the container.
     ports:
       - "3000:3000"
-    # Mapping the client directory on the host machine to the /app directory on the container.
-    # volumes:
-    # - ./client:/app
-    # - ./client/node_modules:/app/node_modules
-    # Allows you to run container in detached mode.
-    stdin_open: true
-    tty: true
+
   server:
-    # Telling docker-compose to build the client image using the Dockerfile in the server directory.
+    # Telling docker-compose to build the server image using the Dockerfile in the server directory.
     build: ./server
     container_name: booktalks-server
     ports:
       - "5000:5000"
-    # volumes:
-    # - ./server:/app
-    # - ./server/node_modules:/app/node_modules

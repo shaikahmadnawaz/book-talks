@@ -1,6 +1,7 @@
-FROM node:14
+# Stage 1
 
-# We use nodemon to restart the server every time there's a change
+FROM node:14-alpine as builder
+
 RUN npm install -g nodemon
 
 WORKDIR /app
@@ -11,7 +12,14 @@ RUN npm install
 
 COPY . .
 
+# Stage 2
+
+FROM node:14-alpine as runner
+
+WORKDIR /app
+
+COPY --from=builder /app .
+
 EXPOSE 5000
 
-# Use script specified in package,json
 CMD ["npm", "run", "dev"]
